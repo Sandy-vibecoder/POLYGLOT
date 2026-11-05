@@ -1,0 +1,2755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polyglot — Learn Programming in Any Language</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#090b10; --bg2:#0d1017; --panel:#121620; --panel2:#171c28; --line:#252c3b; --line2:#323a4d;
+  --text:#e6e9f0; --muted:#8b93a7; --dim:#5d6578;
+  --accent:#5aa7ff; --accent-rgb:90,167,255;
+  --ok:#3ddc97; --bad:#ff6b6b; --warn:#ffc857;
+  --r:16px; --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --display:'Sora',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 var(--body);overflow-x:clip;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.88em;background:rgba(255,255,255,.06);padding:.1em .38em;border-radius:6px;color:#f1d7a6}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+section{position:relative}
+.eyebrow{font:600 12px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--accent);display:inline-flex;gap:10px;align-items:center}
+.eyebrow::before{content:"";width:28px;height:1px;background:var(--accent)}
+.h2{font-size:clamp(30px,5vw,52px);font-weight:800;letter-spacing:-.02em;margin:14px 0 14px}
+.lead{color:var(--muted);font-size:clamp(16px,2vw,19px);max-width:720px}
+.sec{padding:120px 0}
+.grad{background:linear-gradient(100deg,var(--accent),#c58bff 60%,#ff8fb1);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* progress + nav */
+#bar{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--accent),#c58bff);z-index:60}
+nav.top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:14px;padding:10px 18px;background:rgba(9,11,16,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.05);transition:transform .35s}
+nav.top.hide{transform:translateY(-100%)}
+.brand{font:800 18px var(--display);letter-spacing:-.02em;display:flex;align-items:center;gap:8px;color:var(--text);text-decoration:none;white-space:nowrap}
+.brand i{width:22px;height:22px;border-radius:7px;background:conic-gradient(from 200deg,var(--accent),#c58bff,#ff8fb1,var(--accent));display:inline-block}
+.langbar{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1;padding:2px}
+.langbar::-webkit-scrollbar{display:none}
+.lchip{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);color:var(--muted);font:600 12.5px var(--mono);padding:7px 11px;border-radius:999px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.lchip b{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.lchip:hover{color:var(--text);border-color:var(--line2)}
+.lchip.on{color:#0b0d12;background:var(--c);border-color:var(--c)}
+.lchip.on b{background:#0b0d12}
+.ring{flex:0 0 auto;position:relative;width:38px;height:38px}
+.ring svg{transform:rotate(-90deg)}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font:600 10px var(--mono);color:var(--muted)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.rv.l{transform:translateX(-40px)} .rv.r{transform:translateX(40px)} .rv.s{transform:scale(.92)}
+.rv.in{opacity:1;transform:none}
+.dw{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.2s ease;transition-delay:var(--d,0s)}
+.in .dw,.dw.in{stroke-dashoffset:0}
+.nd{opacity:0;transform:translateY(10px);transition:opacity .6s,transform .6s;transition-delay:var(--d,0s);transform-box:fill-box}
+.in .nd{opacity:1;transform:none}
+
+/* hero */
+#hero{min-height:100vh;display:flex;align-items:center;padding:110px 0 70px;overflow:hidden}
+#glyphs{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center;position:relative}
+.hero h1{font-size:clamp(42px,7.4vw,92px);font-weight:800;letter-spacing:-.035em}
+.hero h1 .w{display:inline-block;opacity:0;transform:translateY(60%) rotate(4deg);animation:up 1s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i)*.09s + .1s)}
+@keyframes up{to{opacity:1;transform:none}}
+.hero p.lead{margin:22px 0 30px;animation:fade 1s .7s both}
+@keyframes fade{from{opacity:0;transform:translateY(16px)}}
+.cta{display:flex;gap:12px;flex-wrap:wrap;animation:fade 1s .9s both}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:12px;font:600 15px var(--body);text-decoration:none;cursor:pointer;border:1px solid var(--line2);background:var(--panel);color:var(--text);transition:.2s}
+.btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+.btn.pri{background:var(--accent);color:#06080c;border-color:var(--accent);box-shadow:0 10px 40px -10px rgba(var(--accent-rgb),.7)}
+.stats{display:flex;gap:28px;margin-top:40px;flex-wrap:wrap;animation:fade 1s 1.1s both}
+.stat b{display:block;font:800 30px var(--display)}
+.stat span{color:var(--muted);font-size:13px}
+.term{background:#0c0f15;border:1px solid var(--line);border-radius:18px;box-shadow:0 40px 120px -30px rgba(var(--accent-rgb),.35),0 0 0 1px rgba(255,255,255,.02) inset;overflow:hidden;animation:fade 1.2s .5s both;transform:perspective(1200px) rotateY(-8deg) rotateX(4deg);transition:transform .6s}
+.term:hover{transform:none}
+.term .tb{display:flex;gap:7px;padding:13px 16px;border-bottom:1px solid var(--line);align-items:center}
+.term .tb i{width:11px;height:11px;border-radius:50%;background:#ff5f57}.term .tb i:nth-child(2){background:#febc2e}.term .tb i:nth-child(3){background:#28c840}
+.term .tb span{margin-left:10px;font:12px var(--mono);color:var(--dim)}
+.term pre{margin:0;padding:22px;font:14px/1.75 var(--mono);min-height:230px;white-space:pre-wrap;word-break:break-word}
+.term .p{color:var(--ok)} .term .o{color:var(--muted)} .cursor{display:inline-block;width:8px;height:1.1em;background:var(--accent);vertical-align:-3px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.scrollhint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font:11px var(--mono);color:var(--dim);letter-spacing:.2em;display:flex;flex-direction:column;align-items:center;gap:8px}
+.scrollhint i{width:1px;height:40px;background:linear-gradient(var(--accent),transparent);animation:drip 1.8s infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* roadmap */
+.road{position:relative;margin-top:60px;padding-left:46px}
+.road .spine{position:absolute;left:14px;top:0;bottom:0;width:2px;background:var(--line)}
+.road .spine i{position:absolute;inset:0;background:linear-gradient(var(--accent),#c58bff);transform-origin:top;transform:scaleY(0)}
+.ph{position:relative;padding:0 0 38px}
+.ph::before{content:"";position:absolute;left:-39px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--line2);transition:.4s}
+.ph.in::before{border-color:var(--accent);background:var(--accent);box-shadow:0 0 0 6px rgba(var(--accent-rgb),.15)}
+.ph small{font:600 11px var(--mono);color:var(--accent);letter-spacing:.14em;text-transform:uppercase}
+.ph h3{font-size:22px;margin:6px 0 6px}
+.ph p{margin:0;color:var(--muted);max-width:640px}
+
+/* how code runs (sticky) */
+#how{height:420vh}
+.stick{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:center;max-width:1120px;margin:0 auto;padding:70px 22px 20px}
+.steps{position:relative;min-height:300px}
+.step{position:absolute;inset:0;opacity:0;transform:translateY(24px);transition:.6s;pointer-events:none}
+.step.on{opacity:1;transform:none}
+.step .num{font:800 64px var(--display);color:rgba(var(--accent-rgb),.25);line-height:1}
+.step h3{font-size:clamp(22px,3vw,30px);margin:8px 0 10px}
+.step p{color:var(--muted);margin:0 0 10px}
+.dots{display:flex;gap:8px;margin-top:8px;position:absolute;bottom:-30px;left:0}
+.dots i{width:26px;height:4px;border-radius:4px;background:var(--line2);transition:.4s}
+.dots i.on{background:var(--accent);width:44px}
+#runsvg{width:100%;height:auto;max-height:78vh}
+#runsvg .box rect{fill:var(--panel);stroke:var(--line2);stroke-width:1.5;transition:.5s}
+#runsvg .box text{fill:var(--muted);font:600 13px var(--body);transition:.5s}
+#runsvg .box.lit rect{stroke:var(--accent);fill:rgba(var(--accent-rgb),.12)}
+#runsvg .box.lit text{fill:var(--text)}
+#runsvg .lane.dim{opacity:.32}
+#runsvg .lane{transition:opacity .5s}
+#runsvg .hdr{font:700 12px var(--mono);letter-spacing:.12em;fill:var(--dim);text-transform:uppercase}
+#runsvg .lane:not(.dim) .hdr{fill:var(--accent)}
+#runsvg line,#runsvg path.conn{stroke:var(--line2);stroke-width:1.5}
+#packet{fill:var(--accent);filter:drop-shadow(0 0 8px var(--accent))}
+
+/* languages horizontal */
+#langs .hs-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.hs-track{display:flex;gap:22px;padding:0 22px;will-change:transform;width:max-content}
+.lcard{width:min(330px,78vw);flex:0 0 auto;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:22px;padding:26px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s}
+.lcard::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-80px;top:-80px;background:radial-gradient(var(--c),transparent 70%);opacity:.18}
+.lcard:hover{border-color:var(--c);transform:translateY(-6px)}
+.lcard .badge{width:64px;height:64px}
+.lcard h3{font-size:26px;margin:18px 0 4px}
+.lcard .meta{font:12px var(--mono);color:var(--dim)}
+.lcard p{color:var(--muted);font-size:14.5px;min-height:70px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 18px}
+.tag{font:600 11px var(--mono);padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
+.lcard .btn{width:100%;justify-content:center;padding:11px}
+.lcard.sel{border-color:var(--c);box-shadow:0 0 0 1px var(--c),0 20px 60px -20px var(--c)}
+
+/* compare bars */
+.cmp{display:grid;gap:12px;margin-top:40px}
+.cmprow{display:grid;grid-template-columns:110px 1fr 1fr;gap:16px;align-items:center;padding:12px 14px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.cmprow.hd{background:none;border:none;font:600 11px var(--mono);color:var(--dim);letter-spacing:.12em;text-transform:uppercase;padding:0 14px}
+.cmprow .nm{font:700 14px var(--display);display:flex;align-items:center;gap:8px}
+.cmprow .nm i{width:10px;height:10px;border-radius:3px;background:var(--c)}
+.meter{height:8px;background:var(--line);border-radius:6px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--c);border-radius:6px;transition:width 1.2s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d)}
+.in .meter i{width:var(--w)}
+
+/* cards & generic */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.diagram{background:radial-gradient(ellipse at top,rgba(var(--accent-rgb),.07),transparent 70%),var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:26px 0}
+.diagram svg{width:100%;height:auto;display:block}
+.diagram figcaption{font:12px var(--mono);color:var(--dim);margin-top:10px;text-align:center}
+svg .bx{fill:var(--panel2);stroke:var(--line2);stroke-width:1.5}
+svg .bx.a{stroke:var(--accent);fill:rgba(var(--accent-rgb),.10)}
+svg .bx.g{stroke:var(--ok);fill:rgba(61,220,151,.08)}
+svg .bx.r{stroke:var(--bad);fill:rgba(255,107,107,.08)}
+svg .t{fill:var(--text);font:600 15px var(--body)}
+svg .ts{fill:var(--muted);font:12.5px var(--body)}
+svg .tm{fill:#f1d7a6;font:600 14px var(--mono)}
+svg .tl{fill:var(--accent);font:700 12px var(--mono)}
+svg .ln{stroke:var(--line2);stroke-width:1.8;fill:none}
+svg .ln.a{stroke:var(--accent)}
+.kbd{font:600 12px var(--mono);border:1px solid var(--line2);border-bottom-width:2px;border-radius:6px;padding:1px 6px;color:var(--muted)}
+
+/* terminal 101 */
+.cmdtable{width:100%;border-collapse:collapse;font-size:14.5px}
+.cmdtable td,.cmdtable th{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.cmdtable th{font:600 11px var(--mono);color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+.cmdtable td:first-child{white-space:nowrap}
+
+/* setup */
+.pipe{display:flex;gap:0;margin:34px 0 10px;overflow-x:auto;padding-bottom:6px}
+.pipe .pn{flex:1 0 120px;text-align:center;position:relative;padding:0 6px}
+.pipe .pn .c{width:46px;height:46px;margin:0 auto 10px;border-radius:14px;display:grid;place-items:center;background:var(--panel2);border:1px solid var(--line2);font:700 15px var(--mono);color:var(--muted);transition:.5s;transition-delay:var(--d)}
+.pipe.in .pn .c{border-color:var(--accent);color:var(--accent);background:rgba(var(--accent-rgb),.1)}
+.pipe .pn:not(:last-child)::after{content:"";position:absolute;top:23px;left:calc(50% + 30px);right:calc(-50% + 30px);height:2px;background:linear-gradient(90deg,var(--accent),var(--accent)) no-repeat 0 0/0% 100%,var(--line);transition:background-size .7s;transition-delay:calc(var(--d) + .2s)}
+.pipe.in .pn:not(:last-child)::after{background-size:100% 100%}
+.pipe .pn span{font-size:13px;color:var(--muted);display:block;line-height:1.3}
+.ostabs,.tabs{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px;flex-wrap:wrap}
+.ostabs button,.tabs button{border:0;background:none;color:var(--muted);font:600 13px var(--body);padding:8px 14px;border-radius:9px;cursor:pointer}
+.ostabs button.on,.tabs button.on{background:var(--panel2);color:var(--text);box-shadow:0 0 0 1px var(--line2)}
+.setuphead{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:30px 0 8px}
+.setuphead .badge{width:58px;height:58px}
+.setuphead h3{font-size:28px}
+.what{margin:18px 0 26px;padding:18px 20px;border-left:3px solid var(--accent);background:rgba(var(--accent-rgb),.05);border-radius:0 12px 12px 0;color:#c9cfdc}
+.sstep{display:grid;grid-template-columns:44px 1fr;gap:16px;margin-bottom:26px}
+.sstep .n{width:44px;height:44px;border-radius:12px;background:var(--panel2);border:1px solid var(--line2);display:grid;place-items:center;font:700 15px var(--mono);color:var(--accent)}
+.sstep h4{font-size:18px;margin:8px 0 6px}
+.sstep p{margin:0 0 10px;color:var(--muted)}
+.cmd{display:flex;align-items:flex-start;gap:10px;background:#07090d;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:13.5px/1.6 var(--mono);color:#d7e3ff;margin:8px 0}
+.cmd pre{margin:0;white-space:pre-wrap;word-break:break-all;flex:1;font:inherit}
+.cmd .ps{color:var(--ok);user-select:none}
+.cp{flex:0 0 auto;border:1px solid var(--line2);background:var(--panel);color:var(--muted);font:600 11px var(--mono);border-radius:7px;padding:4px 9px;cursor:pointer}
+.cp:hover{color:var(--text)}.cp.ok{color:var(--ok);border-color:var(--ok)}
+details.pit{border:1px solid var(--line);border-radius:12px;margin:10px 0;background:var(--panel);overflow:hidden}
+details.pit summary{cursor:pointer;padding:14px 16px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:center}
+details.pit summary::-webkit-details-marker{display:none}
+details.pit summary::before{content:"!";width:22px;height:22px;flex:0 0 auto;border-radius:6px;display:grid;place-items:center;background:rgba(255,200,87,.12);color:var(--warn);font:700 13px var(--mono)}
+details.pit[open] summary{border-bottom:1px solid var(--line)}
+details.pit div{padding:14px 16px;color:var(--muted)}
+
+/* lessons */
+.lessons-wrap{display:grid;grid-template-columns:200px 1fr;gap:50px}
+.lnav{position:sticky;top:90px;align-self:start;display:flex;flex-direction:column;gap:2px;margin-top:10px}
+.lnav a{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--dim);font:500 13.5px var(--body);padding:7px 10px;border-radius:9px;transition:.25s}
+.lnav a b{font:600 11px var(--mono);width:22px;color:inherit}
+.lnav a.on{color:var(--text);background:var(--panel)}
+.lnav a.done::after{content:"✓";margin-left:auto;color:var(--ok);font-size:12px}
+.lesson{padding:80px 0 30px;border-bottom:1px solid var(--line)}
+.lesson .ln-num{font:800 clamp(70px,12vw,140px)/.8 var(--display);color:transparent;-webkit-text-stroke:1.5px rgba(var(--accent-rgb),.45);letter-spacing:-.04em}
+.lesson h3{font-size:clamp(28px,4vw,40px);margin:10px 0 6px;letter-spacing:-.02em}
+.lesson .sub{color:var(--accent);font:600 13px var(--mono)}
+.lesson .intro{color:#c9cfdc;font-size:17px;margin:18px 0}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:20px 0}
+.keys div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14.5px;color:var(--muted)}
+.keys div b{display:block;color:var(--text);font-family:var(--display);margin-bottom:4px}
+.codebox{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#07090d;margin:24px 0 16px;box-shadow:0 30px 80px -40px rgba(var(--accent-rgb),.35)}
+.codehead{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+.codehead .fn{font:600 12.5px var(--mono);color:var(--muted);display:flex;align-items:center;gap:8px}
+.codehead .fn i{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.codehead .sp{flex:1}
+.codehead select{background:var(--panel2);color:var(--muted);border:1px solid var(--line2);border-radius:7px;font:600 11.5px var(--mono);padding:4px 6px}
+.panes{display:grid;grid-template-columns:1fr}
+.panes.two{grid-template-columns:1fr 1fr}
+.pane{overflow:auto;position:relative}
+.pane+.pane{border-left:1px solid var(--line)}
+.pane .plabel{position:sticky;left:0;font:600 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:10px 16px 0;color:var(--dim)}
+.code{display:flex;font:13.5px/1.7 var(--mono);padding:14px 0 18px;min-width:max-content}
+.code .gut{color:#3a4254;text-align:right;padding:0 14px 0 16px;user-select:none;white-space:pre}
+.code pre{margin:0;padding-right:20px;white-space:pre;color:#cdd6e6;font:inherit}
+.k{color:#ff7ab6}.s{color:#a5e075}.c{color:#5d6a80;font-style:italic}.n{color:#ffb86b}.f{color:#78c6ff}.ty{color:#ffd580}.pp{color:#c58bff}
+.note{display:flex;gap:14px;padding:16px 18px;border-radius:14px;background:linear-gradient(90deg,rgba(var(--accent-rgb),.09),transparent);border:1px solid rgba(var(--accent-rgb),.25);color:#c9cfdc;font-size:15px}
+.note .badge{width:34px;height:34px;flex:0 0 auto}
+.note b{color:var(--text)}
+.qa{margin-top:22px}
+.quiz{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.quiz h4{font-size:16px;margin:0 0 12px;display:flex;gap:10px;align-items:center}
+.quiz h4 span{font:600 10.5px var(--mono);color:var(--accent);letter-spacing:.14em;border:1px solid rgba(var(--accent-rgb),.4);padding:3px 7px;border-radius:6px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line2);background:var(--panel2);color:var(--text);padding:11px 14px;border-radius:10px;font:500 14.5px var(--body);cursor:pointer;transition:.2s}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--ok);background:rgba(61,220,151,.1)}
+.opt.wrong{border-color:var(--bad);background:rgba(255,107,107,.08)}
+.opt:disabled{cursor:default}
+.why{margin-top:12px;color:var(--muted);font-size:14.5px;display:none}
+.why.show{display:block;animation:fade .4s}
+.ex{background:var(--panel);border:1px dashed var(--line2);border-radius:var(--r);padding:20px}
+.ex h4{font-size:16px;margin:0 0 8px;display:flex;gap:10px;align-items:center}
+.ex h4 span{font:600 10.5px var(--mono);color:var(--warn);letter-spacing:.14em;border:1px solid rgba(255,200,87,.4);padding:3px 7px;border-radius:6px}
+.ex p{margin:0 0 10px;color:#c9cfdc}
+.ex details{margin-top:8px}
+.ex summary{cursor:pointer;color:var(--accent);font:600 13px var(--mono)}
+.ex details p{color:var(--muted);margin:8px 0 0}
+.ex pre{background:#07090d;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:13px var(--mono);color:var(--muted);margin:8px 0 0;white-space:pre-wrap}
+.done-btn{margin-top:22px}
+.done-btn.isdone{background:rgba(61,220,151,.12);border-color:var(--ok);color:var(--ok)}
+
+/* capstone */
+.miles{counter-reset:m;display:grid;gap:12px;margin:26px 0}
+.mile{display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;cursor:pointer;transition:.25s}
+.mile:hover{border-color:var(--line2)}
+.mile input{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:2px solid var(--line2);border-radius:7px;flex:0 0 auto;margin:2px 0 0;cursor:pointer;display:grid;place-items:center;transition:.2s}
+.mile input:checked{background:var(--ok);border-color:var(--ok)}
+.mile input:checked::after{content:"✓";color:#06080c;font:800 13px var(--body)}
+.mile b{display:block;font-family:var(--display)}
+.mile span{color:var(--muted);font-size:14.5px}
+.mile small{font:600 11px var(--mono);color:var(--accent)}
+.session{background:#07090d;border:1px solid var(--line);border-radius:14px;padding:18px;font:13.5px/1.75 var(--mono);color:var(--muted);white-space:pre-wrap;margin:0}
+.session .u{color:var(--ok)}
+
+/* paths */
+.path{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;position:relative;overflow:hidden;transition:.3s}
+.path:hover{transform:translateY(-4px);border-color:var(--line2)}
+.path .ic{width:44px;height:44px;margin-bottom:14px}
+.path h4{font-size:19px;margin-bottom:6px}
+.path p{color:var(--muted);font-size:14.5px;margin:0 0 12px}
+.nextlist{display:grid;gap:10px;margin:20px 0 0;padding:0;list-style:none}
+.nextlist li{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--muted)}
+.nextlist li b{color:var(--text)}
+.nextlist li::before{content:"→";color:var(--accent);font-family:var(--mono)}
+footer{padding:60px 0 80px;color:var(--dim);font-size:14px;border-top:1px solid var(--line)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,120px);background:var(--panel2);border:1px solid var(--line2);padding:10px 16px;border-radius:10px;font:600 13px var(--body);z-index:80;transition:.35s}
+.toast.show{transform:translate(-50%,0)}
+
+@media (max-width:1100px){.lessons-wrap{grid-template-columns:1fr}.lnav{display:none}}
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr}
+  .term{transform:none}
+  .stick{grid-template-columns:1fr;grid-template-rows:auto 1fr;gap:8px;align-content:start;padding-top:66px}
+  .stick .steps{order:2;min-height:220px}
+  #runsvg{max-height:52vh}
+  .step .num{font-size:40px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .panes.two{grid-template-columns:1fr}.pane+.pane{border-left:0;border-top:1px solid var(--line)}
+  .cmprow{grid-template-columns:80px 1fr 1fr;gap:10px}
+  .sec{padding:90px 0}
+  .brand span{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .rv,.nd{opacity:1;transform:none}.dw{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a5470"/></marker>
+    <marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker>
+    <marker id="tri" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto"><path d="M0,0 L12,6 L0,12 z" style="fill:var(--bg2)" stroke="#8b93a7" stroke-width="1.2"/></marker>
+  </defs>
+</svg>
+
+<nav class="top" id="nav">
+  <a class="brand" href="#hero"><i></i><span>Polyglot</span></a>
+  <div class="langbar" id="langbar" aria-label="Choose language"></div>
+  <div class="ring" title="Course progress">
+    <svg width="38" height="38"><circle cx="19" cy="19" r="15" stroke="#252c3b" stroke-width="3" fill="none"/><circle id="ringc" cx="19" cy="19" r="15" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="94.25" stroke-dashoffset="94.25" style="stroke:var(--accent);transition:stroke-dashoffset .6s"/></svg>
+    <span id="ringt">0%</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="hero">
+  <canvas id="glyphs"></canvas>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">A complete course · from zero</div>
+      <h1 id="herot"></h1>
+      <p class="lead">Eight languages, one path. Set up your machine properly, understand <em>why</em> each line works, and build real programs in Python, JavaScript, Java, C, C++, C#, Go and Rust. Pick a language up top and every lesson rewrites itself.</p>
+      <div class="cta">
+        <a class="btn pri" href="#roadmap">Start the course →</a>
+        <a class="btn" href="#setup">Jump to setup</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b data-count="8">0</b><span>languages</span></div>
+        <div class="stat"><b data-count="9">0</b><span>core lessons</span></div>
+        <div class="stat"><b data-count="72">0</b><span>annotated programs</span></div>
+        <div class="stat"><b data-count="12">0</b><span>animated diagrams</span></div>
+      </div>
+    </div>
+    <div class="term" aria-hidden="true">
+      <div class="tb"><i></i><i></i><i></i><span id="termtitle">~/polyglot</span></div>
+      <pre id="termout"></pre>
+    </div>
+  </div>
+  <div class="scrollhint">SCROLL<i></i></div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" class="sec">
+  <div class="wrap">
+    <div class="eyebrow rv">How this course works</div>
+    <h2 class="h2 rv">The roadmap</h2>
+    <p class="lead rv">Every programming language is built from the same handful of ideas. Learn the ideas once, and each new language is mostly new spelling. The course follows the order professionals actually learn in.</p>
+    <div class="road" id="road">
+      <div class="spine"><i id="spine"></i></div>
+      <div class="ph rv"><small>Phase 0 · Mental model</small><h3>How code actually runs</h3><p>Compilers, interpreters and virtual machines — what happens between you pressing Enter and text appearing on screen.</p></div>
+      <div class="ph rv"><small>Phase 1 · Your workshop</small><h3>Terminal, PATH and toolchain setup</h3><p>Install each language the right way on Windows, macOS or Linux, and understand what you installed so errors stop being scary.</p></div>
+      <div class="ph rv"><small>Phase 2 · Lessons 1–3</small><h3>Syntax foundations</h3><p>Program structure, variables and types, operators and strings.</p></div>
+      <div class="ph rv"><small>Phase 3 · Lessons 4–5</small><h3>Logic & control flow</h3><p>Making decisions and repeating work — the two things that make programs useful.</p></div>
+      <div class="ph rv"><small>Phase 4 · Lessons 6–8</small><h3>Abstraction</h3><p>Functions, collections, and objects: how to organise code so it scales past 50 lines.</p></div>
+      <div class="ph rv"><small>Phase 5 · Lesson 9</small><h3>Robustness</h3><p>Handling errors properly — the difference between a demo and software.</p></div>
+      <div class="ph rv"><small>Phase 6 · Capstone</small><h3>Build a real CLI app</h3><p>A task tracker that ties every lesson together, with milestones you tick off.</p></div>
+      <div class="ph rv"><small>Phase 7 · Specialise</small><h3>Choose your path</h3><p>Web, backend, systems, data/AI, mobile or games — and which language fits each.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW CODE RUNS -->
+<section id="how">
+  <div class="stick">
+    <div class="steps" id="steps">
+      <div class="eyebrow" style="position:absolute;top:-40px">Phase 0 · How code runs</div>
+      <div class="step on"><div class="num">01</div><h3>You write plain text</h3><p>Source code is just a text file — <code>hello.py</code>, <code>Main.java</code>, <code>main.rs</code>. The computer can't run text. Something has to translate it.</p><p>The highlighted column is the path for your selected language.</p></div>
+      <div class="step"><div class="num">02</div><h3>A translator reads it</h3><p>A <b>compiler</b> translates the whole program ahead of time. An <b>interpreter</b> translates as it runs. This step is where syntax errors are caught.</p></div>
+      <div class="step"><div class="num">03</div><h3>It becomes instructions</h3><p>Native languages (C, C++, Go, Rust) produce a machine-code executable. Java and C# produce portable <b>bytecode</b>. Python and JavaScript make bytecode in memory, on the fly.</p></div>
+      <div class="step"><div class="num">04</div><h3>The CPU executes</h3><p>Native code runs straight on the CPU. Bytecode runs on a virtual machine (JVM, .NET CLR, CPython, V8) that often <b>JIT-compiles</b> hot code into machine code while running. This is why setup differs per language: you're installing a compiler, a VM, or an interpreter.</p></div>
+      <div class="dots" id="dots"><i class="on"></i><i></i><i></i><i></i></div>
+    </div>
+    <svg id="runsvg" viewBox="0 0 540 500" role="img" aria-label="Diagram of how code runs in native, VM and interpreted languages">
+      <g class="lane" data-lane="native">
+        <text class="hdr" x="95" y="26" text-anchor="middle">Native</text>
+        <g class="box s0"><rect x="15" y="44" width="160" height="58" rx="12"/><text x="95" y="70" text-anchor="middle">main.c · .rs · .go</text><text x="95" y="88" text-anchor="middle" style="font-size:11px">source text</text></g>
+        <g class="box s1"><rect x="15" y="140" width="160" height="58" rx="12"/><text x="95" y="166" text-anchor="middle">Compiler</text><text x="95" y="184" text-anchor="middle" style="font-size:11px">gcc · rustc · go build</text></g>
+        <g class="box s2"><rect x="15" y="236" width="160" height="58" rx="12"/><text x="95" y="262" text-anchor="middle">Executable</text><text x="95" y="280" text-anchor="middle" style="font-size:11px">machine code file</text></g>
+        <g class="box s3"><rect x="15" y="332" width="160" height="58" rx="12"/><text x="95" y="358" text-anchor="middle">OS loads it</text><text x="95" y="376" text-anchor="middle" style="font-size:11px">no runtime needed</text></g>
+        <line x1="95" y1="102" x2="95" y2="136" marker-end="url(#arr)"/><line x1="95" y1="198" x2="95" y2="232" marker-end="url(#arr)"/><line x1="95" y1="294" x2="95" y2="328" marker-end="url(#arr)"/><line x1="95" y1="390" x2="95" y2="430" marker-end="url(#arr)"/>
+      </g>
+      <g class="lane" data-lane="vm">
+        <text class="hdr" x="270" y="26" text-anchor="middle">Virtual machine</text>
+        <g class="box s0"><rect x="190" y="44" width="160" height="58" rx="12"/><text x="270" y="70" text-anchor="middle">Main.java · .cs</text><text x="270" y="88" text-anchor="middle" style="font-size:11px">source text</text></g>
+        <g class="box s1"><rect x="190" y="140" width="160" height="58" rx="12"/><text x="270" y="166" text-anchor="middle">Compiler</text><text x="270" y="184" text-anchor="middle" style="font-size:11px">javac · Roslyn</text></g>
+        <g class="box s2"><rect x="190" y="236" width="160" height="58" rx="12"/><text x="270" y="262" text-anchor="middle">Bytecode</text><text x="270" y="280" text-anchor="middle" style="font-size:11px">.class · IL in .dll</text></g>
+        <g class="box s3"><rect x="190" y="332" width="160" height="58" rx="12"/><text x="270" y="358" text-anchor="middle">VM + JIT</text><text x="270" y="376" text-anchor="middle" style="font-size:11px">JVM · .NET CLR</text></g>
+        <line x1="270" y1="102" x2="270" y2="136" marker-end="url(#arr)"/><line x1="270" y1="198" x2="270" y2="232" marker-end="url(#arr)"/><line x1="270" y1="294" x2="270" y2="328" marker-end="url(#arr)"/><line x1="270" y1="390" x2="270" y2="430" marker-end="url(#arr)"/>
+      </g>
+      <g class="lane" data-lane="interp">
+        <text class="hdr" x="445" y="26" text-anchor="middle">Interpreted</text>
+        <g class="box s0"><rect x="365" y="44" width="160" height="58" rx="12"/><text x="445" y="70" text-anchor="middle">hello.py · .js</text><text x="445" y="88" text-anchor="middle" style="font-size:11px">source text</text></g>
+        <g class="box s1"><rect x="365" y="140" width="160" height="58" rx="12"/><text x="445" y="166" text-anchor="middle">Parser</text><text x="445" y="184" text-anchor="middle" style="font-size:11px">at run time</text></g>
+        <g class="box s2"><rect x="365" y="236" width="160" height="58" rx="12"/><text x="445" y="262" text-anchor="middle">Bytecode</text><text x="445" y="280" text-anchor="middle" style="font-size:11px">in memory</text></g>
+        <g class="box s3"><rect x="365" y="332" width="160" height="58" rx="12"/><text x="445" y="358" text-anchor="middle">Interpreter / JIT</text><text x="445" y="376" text-anchor="middle" style="font-size:11px">CPython · V8</text></g>
+        <line x1="445" y1="102" x2="445" y2="136" marker-end="url(#arr)"/><line x1="445" y1="198" x2="445" y2="232" marker-end="url(#arr)"/><line x1="445" y1="294" x2="445" y2="328" marker-end="url(#arr)"/><line x1="445" y1="390" x2="445" y2="430" marker-end="url(#arr)"/>
+      </g>
+      <g class="box s3 cpu"><rect x="15" y="434" width="510" height="52" rx="12"/><text x="270" y="466" text-anchor="middle">CPU — executes machine instructions → "Hello, World!"</text></g>
+      <circle id="packet" r="7" cx="95" cy="73"/>
+    </svg>
+  </div>
+</section>
+
+<!-- LANGUAGES -->
+<section id="langs">
+  <div class="hs-sticky">
+    <div class="wrap" style="width:100%;margin-bottom:30px">
+      <div class="eyebrow">Meet the languages</div>
+      <h2 class="h2" style="margin-bottom:6px">Eight tools, eight personalities</h2>
+      <p class="lead" style="margin:0">Keep scrolling — the cards slide sideways. Tap <b>Learn this</b> to switch the whole course.</p>
+    </div>
+    <div class="hs-track" id="track"></div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:60px">
+  <div class="wrap">
+    <div class="eyebrow rv">At a glance</div>
+    <h2 class="h2 rv">Which one first?</h2>
+    <p class="lead rv">A rough, opinionated guide. "Ease" is how gentle the first month is; "speed" is typical runtime performance. Every one of these languages powers serious production software.</p>
+    <div class="cmp rv" id="cmp"></div>
+    <div class="grid3" style="margin-top:34px">
+      <div class="card rv" style="--d:.0s"><b style="font-family:var(--display)">Total beginner?</b><p style="color:var(--muted);margin:6px 0 0">Start with <b>Python</b> (clean syntax) or <b>JavaScript</b> (runs in every browser, instant visual results).</p></div>
+      <div class="card rv" style="--d:.1s"><b style="font-family:var(--display)">Want a job fast?</b><p style="color:var(--muted);margin:6px 0 0"><b>JavaScript</b> for web, <b>Java</b> or <b>C#</b> for enterprise backends, <b>Python</b> for data and automation.</p></div>
+      <div class="card rv" style="--d:.2s"><b style="font-family:var(--display)">Want to understand computers?</b><p style="color:var(--muted);margin:6px 0 0"><b>C</b> first — memory, pointers and the machine laid bare. Then <b>Rust</b> or <b>Go</b>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TERMINAL 101 -->
+<section id="terminal" class="sec" style="background:linear-gradient(var(--bg),var(--bg2) 30%,var(--bg))">
+  <div class="wrap">
+    <div class="eyebrow rv">Phase 1 · Before you install anything</div>
+    <h2 class="h2 rv">The terminal & PATH, demystified</h2>
+    <p class="lead rv">Every setup guide says "run this in your terminal" and "add it to PATH". Here is what those actually mean — 90% of beginner setup problems are PATH problems.</p>
+    <div class="grid2" style="margin-top:36px">
+      <div class="card rv l">
+        <h3 style="font-size:20px;margin-bottom:10px">What is the terminal?</h3>
+        <p style="color:var(--muted)">A text window where you type commands to a program called a <b>shell</b> (PowerShell on Windows, zsh on macOS, bash on Linux). The shell is always "standing in" a folder — the <b>current working directory</b>. Commands run relative to it.</p>
+        <p style="color:var(--muted);margin-bottom:0"><b>Open it:</b> Windows → press <span class="kbd">Win</span>, type "Terminal". macOS → <span class="kbd">⌘ Space</span>, type "Terminal". Linux → <span class="kbd">Ctrl Alt T</span>.</p>
+      </div>
+      <div class="card rv r">
+        <h3 style="font-size:20px;margin-bottom:10px">The 6 commands you need</h3>
+        <table class="cmdtable">
+          <tr><th>Command</th><th>What it does</th></tr>
+          <tr><td><code>pwd</code></td><td>Print where you are</td></tr>
+          <tr><td><code>ls</code></td><td>List files here (<code>dir</code> in old cmd.exe)</td></tr>
+          <tr><td><code>cd folder</code></td><td>Move into a folder; <code>cd ..</code> goes up</td></tr>
+          <tr><td><code>mkdir name</code></td><td>Make a folder</td></tr>
+          <tr><td><code>code .</code></td><td>Open this folder in VS Code</td></tr>
+          <tr><td><span class="kbd">↑</span> / <span class="kbd">Tab</span></td><td>Previous command / autocomplete names</td></tr>
+        </table>
+      </div>
+    </div>
+    <figure class="diagram rv" style="margin-top:28px">
+      <svg viewBox="0 0 560 270" id="pathsvg">
+        <g class="nd" style="--d:.1s"><rect class="bx a" x="10" y="20" width="170" height="54" rx="10"/><text class="tm" x="28" y="53">$ python3 hi.py</text></g>
+        <line class="ln a dw" pathLength="1" style="--d:.4s" x1="180" y1="47" x2="232" y2="47" marker-end="url(#arra)"/>
+        <g class="nd" style="--d:.5s"><rect class="bx" x="236" y="20" width="130" height="54" rx="10"/><text class="t" x="301" y="45" text-anchor="middle">Shell</text><text class="ts" x="301" y="63" text-anchor="middle">"where is python3?"</text></g>
+        <path class="ln dw" pathLength="1" style="--d:.8s" d="M301 74 V100 H120 V112" marker-end="url(#arr)"/>
+        <text class="tl nd" style="--d:.9s" x="384" y="96">searches PATH, in order ↓</text>
+        <g class="nd" style="--d:1.1s"><rect class="bx r" x="40" y="116" width="300" height="38" rx="9"/><text class="tm" x="56" y="140">/home/you/.local/bin</text><text class="t" x="318" y="141" text-anchor="end" style="fill:var(--bad)">✗</text></g>
+        <g class="nd" style="--d:1.4s"><rect class="bx r" x="40" y="162" width="300" height="38" rx="9"/><text class="tm" x="56" y="186">/usr/local/bin</text><text class="t" x="318" y="187" text-anchor="end" style="fill:var(--bad)">✗</text></g>
+        <g class="nd" style="--d:1.7s"><rect class="bx g" x="40" y="208" width="300" height="38" rx="9"/><text class="tm" x="56" y="232">/usr/bin/python3</text><text class="t" x="318" y="233" text-anchor="end" style="fill:var(--ok)">✓</text></g>
+        <line class="ln a dw" pathLength="1" style="--d:2s" x1="340" y1="227" x2="392" y2="227" marker-end="url(#arra)"/>
+        <g class="nd" style="--d:2.2s"><rect class="bx g" x="396" y="198" width="154" height="58" rx="10"/><text class="t" x="473" y="223" text-anchor="middle">Runs it</text><text class="ts" x="473" y="242" text-anchor="middle">with hi.py as input</text></g>
+        <text class="ts nd" style="--d:2.4s" x="384" y="130">Not found anywhere?</text>
+        <text class="ts nd" style="--d:2.5s;fill:var(--bad)" x="384" y="150">"command not found"</text>
+      </svg>
+      <figcaption>PATH is just an ordered list of folders the shell searches when you type a command name.</figcaption>
+    </figure>
+    <div class="note rv"><div style="font-size:22px">💡</div><div><b>The golden rule:</b> after installing anything, <b>close and reopen your terminal</b>. A terminal reads PATH once when it starts, so a freshly installed tool is invisible to windows that were already open. On Windows, also consider <b>WSL</b> (<code>wsl --install</code>) to get a real Linux environment — many tutorials assume it.</div></div>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section id="setup" class="sec">
+  <div class="wrap">
+    <div class="eyebrow rv">Phase 1 · Toolchain setup</div>
+    <h2 class="h2 rv">Set up <span class="grad" id="setupname">Python</span> properly</h2>
+    <p class="lead rv">Every language follows the same pipeline. The commands differ; the shape doesn't.</p>
+    <div class="pipe rv" id="pipe">
+      <div class="pn" style="--d:0s"><div class="c">1</div><span>Install toolchain</span></div>
+      <div class="pn" style="--d:.25s"><div class="c">2</div><span>Lands on PATH</span></div>
+      <div class="pn" style="--d:.5s"><div class="c">3</div><span>Verify version</span></div>
+      <div class="pn" style="--d:.75s"><div class="c">4</div><span>Create project</span></div>
+      <div class="pn" style="--d:1s"><div class="c">5</div><span>Run & iterate</span></div>
+    </div>
+    <div class="setuphead">
+      <div id="setupbadge"></div>
+      <div style="flex:1;min-width:200px"><h3 id="setuptitle">Python</h3><div class="meta" id="setupmeta" style="font:12.5px var(--mono);color:var(--dim)"></div></div>
+      <div class="ostabs" id="ostabs"><button data-os="win">Windows</button><button data-os="mac">macOS</button><button data-os="linux">Linux</button></div>
+    </div>
+    <div class="what" id="setupwhat"></div>
+    <div id="setupsteps"></div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="card"><h3 style="font-size:18px;margin-bottom:8px">🧰 Editor setup</h3><div id="setupeditor" style="color:var(--muted)"></div></div>
+      <div class="card"><h3 style="font-size:18px;margin-bottom:8px">🧪 Your first file</h3><div style="color:var(--muted)">Create the file named below inside your project folder, paste in Lesson 1, then run:</div><div class="cmd"><span class="ps">$</span><pre id="setuprun"></pre><button class="cp">copy</button></div></div>
+    </div>
+    <h3 style="font-size:22px;margin:40px 0 12px">When things go wrong</h3>
+    <div id="setuppits"></div>
+  </div>
+</section>
+
+<!-- LESSONS -->
+<section id="course" class="sec" style="padding-top:40px">
+  <div class="wrap">
+    <div class="eyebrow rv">Phases 2–5 · Core lessons</div>
+    <h2 class="h2 rv">The fundamentals, in <span class="grad" id="lessonlang">Python</span></h2>
+    <p class="lead rv">Each lesson: the idea, a diagram, a fully commented program, language-specific gotchas, a quick check and an exercise. Use <b>Compare</b> in any code block to see a second language side by side. Tip: keys <span class="kbd">1</span>–<span class="kbd">8</span> switch language.</p>
+    <div class="lessons-wrap">
+      <aside class="lnav" id="lnav"></aside>
+      <div id="lessons"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CAPSTONE -->
+<section id="capstone" class="sec">
+  <div class="wrap">
+    <div class="eyebrow rv">Phase 6 · Capstone project</div>
+    <h2 class="h2 rv">Build <span class="grad">Task Tracker</span>, a real CLI app</h2>
+    <p class="lead rv">No copy-paste here: you write it, using only what the nine lessons taught. Tick milestones as you go — they're saved in this browser.</p>
+    <figure class="diagram rv">
+      <svg viewBox="0 0 560 330"><g class="nd" style="--d:0.1s"><rect class="bx a" x="10" y="20" width="110" height="40" rx="20"/><text class="t" x="65.0" y="45.0" text-anchor="middle">Start</text></g><path class="ln  dw" pathLength="1" style="--d:0.3s" d="M120 40 H156" marker-end="url(#arr)"/><g class="nd" style="--d:0.4s"><rect class="bx " x="160" y="20" width="160" height="40" rx="10"/><text class="t" x="240.0" y="45.0" text-anchor="middle">Load tasks file</text></g><path class="ln  dw" pathLength="1" style="--d:0.6s" d="M320 40 H346" marker-end="url(#arr)"/><g class="nd" style="--d:0.7s"><rect class="bx " x="350" y="20" width="180" height="40" rx="10"/><text class="tm" x="440.0" y="45.0" text-anchor="middle">print "&gt; ", read</text></g><path class="ln  dw" pathLength="1" style="--d:0.9s" d="M440 60 V92" marker-end="url(#arr)"/><g class="nd" style="--d:1s"><polygon class="bx a" points="440,96 515,128 440,160 365,128"/><text class="t" x="440" y="133" text-anchor="middle">command?</text></g><path class="ln  dw" pathLength="1" style="--d:1.2s" d="M440 160 V180 H60 V206" marker-end="url(#arr)"/><path class="ln  dw" pathLength="1" style="--d:1.3s" d="M170 180 V206" marker-end="url(#arr)"/><path class="ln  dw" pathLength="1" style="--d:1.35s" d="M280 180 V206" marker-end="url(#arr)"/><path class="ln  dw" pathLength="1" style="--d:1.4s" d="M390 180 V206" marker-end="url(#arr)"/><path class="ln  dw" pathLength="1" style="--d:1.45s" d="M500 180 V206" marker-end="url(#arr)"/><g class="nd" style="--d:1.5s"><rect class="bx g" x="10" y="210" width="100" height="36" rx="10"/><text class="tm" x="60.0" y="233.0" text-anchor="middle">quit</text></g><g class="nd" style="--d:1.55s"><rect class="bx " x="120" y="210" width="100" height="36" rx="10"/><text class="tm" x="170.0" y="233.0" text-anchor="middle">add</text></g><g class="nd" style="--d:1.6s"><rect class="bx " x="230" y="210" width="100" height="36" rx="10"/><text class="tm" x="280.0" y="233.0" text-anchor="middle">list</text></g><g class="nd" style="--d:1.65s"><rect class="bx " x="340" y="210" width="100" height="36" rx="10"/><text class="tm" x="390.0" y="233.0" text-anchor="middle">done</text></g><g class="nd" style="--d:1.7s"><rect class="bx r" x="450" y="210" width="100" height="36" rx="10"/><text class="tm" x="500.0" y="233.0" text-anchor="middle">unknown</text></g><path class="ln a dw" pathLength="1" style="--d:1.9s" d="M170 246 V266 H500 M280 246 V266 M390 246 V266 M500 246 V266"/><path class="ln a dw" pathLength="1" style="--d:2.1s" d="M500 266 H552 V40 H534" marker-end="url(#arra)"/><text class="tl nd" style="--d:2.3s" x="400" y="290">loop back to prompt</text><path class="ln  dw" pathLength="1" style="--d:1.9s" d="M60 246 V276" marker-end="url(#arr)"/><g class="nd" style="--d:2.0s"><rect class="bx g" x="10" y="280" width="100" height="36" rx="10"/><text class="t" x="60.0" y="303.0" text-anchor="middle">save &amp; exit</text></g></svg><figcaption>One loop (L5) around a decision (L4), calling one function per command (L6) on a list (L7) of Task objects (L8), guarded by error handling (L9).</figcaption>
+    </figure>
+    <div class="grid2">
+      <div>
+        <h3 style="font-size:20px;margin-bottom:6px">What it should do</h3>
+<pre class="session"><span class="u">&gt; add Buy milk</span>
+Added #1: Buy milk
+<span class="u">&gt; add Write report</span>
+Added #2: Write report
+<span class="u">&gt; done 1</span>
+✓ #1 Buy milk
+<span class="u">&gt; list</span>
+[x] 1  Buy milk
+[ ] 2  Write report
+<span class="u">&gt; done 9</span>
+No task with id 9
+<span class="u">&gt; quit</span>
+Saved 2 tasks. Bye!</pre>
+      </div>
+      <div>
+        <h3 style="font-size:20px;margin-bottom:6px">The one new piece: reading input in <span id="inlang">Python</span></h3>
+        <div class="codebox" style="margin-top:12px"><div class="panes"><div class="pane"><div class="code" id="inputcode"></div></div></div></div>
+      </div>
+    </div>
+    <div class="miles" id="miles"></div>
+  </div>
+</section>
+
+<!-- PATHS -->
+<section id="next" class="sec" style="padding-top:40px">
+  <div class="wrap">
+    <div class="eyebrow rv">Phase 7 · Specialise</div>
+    <h2 class="h2 rv">Where to go from here</h2>
+    <div class="grid3" style="margin-top:34px" id="paths"></div>
+    <h3 style="font-size:24px;margin:50px 0 0" class="rv">Next steps in <span class="grad" id="nextlang">Python</span></h3>
+    <ul class="nextlist" id="nextlist"></ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
+    <div><b style="color:var(--text);font-family:var(--display)">Polyglot</b> — a from-scratch programming course. Progress is stored only in this browser.</div>
+    <button class="btn" id="reset" style="padding:8px 14px;font-size:13px">Reset progress</button>
+  </div>
+</footer>
+<div class="toast" id="toast"></div>
+
+<!-- ======================= CODE SNIPPETS ======================= -->
+<script type="text/x-code" id="code-hello-python">
+# Python executes this file top-to-bottom.
+# No braces, no semicolons — indentation IS the syntax.
+
+def main():
+    print("Hello, World!")   # print() writes a line to standard output
+
+if __name__ == "__main__":   # True only when run directly, not when imported
+    main()
+</script>
+<script type="text/x-code" id="code-hello-javascript">
+// Node runs this file top-to-bottom, just like Python.
+// console.log writes a line to stdout (or the browser's DevTools console).
+
+function main() {
+  console.log("Hello, World!");
+}
+
+main();
+</script>
+<script type="text/x-code" id="code-hello-java">
+// File MUST be named Hello.java — public class name and file name must match.
+public class Hello {
+    // The JVM looks for exactly this signature as the entry point.
+    // String[] args holds any command-line arguments.
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+</script>
+<script type="text/x-code" id="code-hello-c">
+#include <stdio.h>   // preprocessor pastes in the declaration of printf
+
+// Every C program starts at main. Returning 0 tells the OS "success".
+int main(void) {
+    printf("Hello, World!\n");   // \n = newline; printf doesn't add one
+    return 0;
+}
+</script>
+<script type="text/x-code" id="code-hello-cpp">
+#include <iostream>   // the C++ input/output stream library
+
+int main() {
+    // std:: is the standard-library namespace; << pushes data into the stream
+    std::cout << "Hello, World!" << '\n';
+    return 0;   // optional in main, shown for clarity
+}
+</script>
+<script type="text/x-code" id="code-hello-csharp">
+// Modern C# (top-level statements): the compiler wraps this in Main() for you.
+Console.WriteLine("Hello, World!");
+
+// The classic form you'll still see in older code:
+// class Program { static void Main() { Console.WriteLine("Hello"); } }
+</script>
+<script type="text/x-code" id="code-hello-go">
+package main   // package "main" = an executable, not a library
+
+import "fmt"   // formatted I/O from the standard library
+
+func main() {  // execution starts here
+	fmt.Println("Hello, World!")
+}
+</script>
+<script type="text/x-code" id="code-hello-rust">
+// fn main is the entry point. println! ends in "!" because it's a macro,
+// expanded at compile time — it checks your format string for you.
+fn main() {
+    println!("Hello, World!");
+}
+</script>
+
+<script type="text/x-code" id="code-vars-python">
+name = "Ada"          # str   — type is inferred from the value
+age = 36              # int   — arbitrary precision, never overflows
+height = 1.65         # float — 64-bit double
+is_admin = False      # bool  — note the capital F
+
+age = age + 1         # the name now points at a new int object (37)
+PI = 3.14159          # UPPER_CASE = "please don't change" (convention only)
+
+print(type(age), age)              # <class 'int'> 37
+print(f"{name} is {age} years")    # f-string interpolation
+</script>
+<script type="text/x-code" id="code-vars-javascript">
+const name = "Ada";     // const: the binding can't be reassigned
+let age = 36;           // let: block-scoped, reassignable
+const height = 1.65;    // every number is a 64-bit float
+let isAdmin = false;
+// avoid `var` — it's function-scoped and hoisted (legacy behaviour)
+
+age += 1;
+console.log(typeof age, age);              // number 37
+console.log(`${name} is ${age} years`);    // template literal
+</script>
+<script type="text/x-code" id="code-vars-java">
+public class Vars {
+    public static void main(String[] args) {
+        String name = "Ada";        // reference type (an object)
+        int age = 36;               // primitive, 32-bit
+        double height = 1.65;       // primitive, 64-bit float
+        boolean isAdmin = false;
+        final double PI = 3.14159;  // final = can't be reassigned
+        var city = "London";        // var: type inferred (Java 10+)
+
+        age = age + 1;
+        System.out.println(name + " is " + age + " years, lives in " + city);
+    }
+}
+</script>
+<script type="text/x-code" id="code-vars-c">
+#include <stdio.h>
+#include <stdbool.h>   // bool/true/false (built in from C23)
+
+int main(void) {
+    const char *name = "Ada";   // pointer to the first char of the text
+    int age = 36;               // usually 32-bit; it CAN overflow
+    double height = 1.65;
+    bool is_admin = false;
+
+    age = age + 1;
+    // format specifiers must match types: %s string, %d int, %.2f double
+    printf("%s is %d years, %.2f m, admin=%d\n", name, age, height, is_admin);
+    return 0;
+}
+</script>
+<script type="text/x-code" id="code-vars-cpp">
+#include <iostream>
+#include <string>
+
+int main() {
+    std::string name = "Ada";   // owns its text, grows as needed
+    int age = 36;
+    double height = 1.65;
+    bool isAdmin = false;
+    auto score = 9.5;           // auto: the compiler deduces double
+    const double PI = 3.14159;
+
+    age += 1;
+    std::cout << name << " is " << age << " years, score " << score << '\n';
+}
+</script>
+<script type="text/x-code" id="code-vars-csharp">
+string name = "Ada";
+int age = 36;            // 32-bit
+double height = 1.65;
+bool isAdmin = false;
+var city = "London";     // inferred as string — still statically typed
+const double Pi = 3.14159;
+
+age += 1;
+Console.WriteLine($"{name} is {age} years, lives in {city}");   // $"" interpolation
+</script>
+<script type="text/x-code" id="code-vars-go">
+package main
+
+import "fmt"
+
+func main() {
+	var name string = "Ada" // explicit type
+	age := 36               // := declares AND infers (inside functions only)
+	height := 1.65          // float64
+	isAdmin := false
+	const Pi = 3.14159
+
+	age++
+	fmt.Printf("%s is %d years, %.2f m, admin=%t\n", name, age, height, isAdmin)
+	// Go refuses to compile if you declare a variable and never use it.
+}
+</script>
+<script type="text/x-code" id="code-vars-rust">
+fn main() {
+    let name = "Ada";          // &str, immutable by default
+    let mut age = 36;          // mut = allowed to change; inferred as i32
+    let height: f64 = 1.65;    // explicit type annotation
+    let is_admin = false;
+    const PI: f64 = 3.14159;   // constants always need a type
+
+    age += 1;
+    println!("{name} is {age} years, {height} m, admin={is_admin}, pi={PI}");
+}
+</script>
+
+<script type="text/x-code" id="code-ops-python">
+a, b = 17, 5
+print(a + b, a - b, a * b)   # 22 12 85
+print(a / b)                 # 3.4  — / always gives a float
+print(a // b, a % b)         # 3 2  — floor division and remainder
+print(a ** 2)                # 289  — power
+
+s = "Hello"
+print(len(s), s.upper(), s[0], s[-1])  # 5 HELLO H o
+print(s + ", World")                    # concatenation
+print("ell" in s)                       # True — substring test
+print(s[1:4])                           # ell  — slice [start:end)
+</script>
+<script type="text/x-code" id="code-ops-javascript">
+const a = 17, b = 5;
+console.log(a + b, a - b, a * b);        // 22 12 85
+console.log(a / b);                      // 3.4
+console.log(Math.trunc(a / b), a % b);   // 3 2
+console.log(a ** 2);                     // 289
+
+console.log(5 == "5", 5 === "5");        // true false — always use ===
+
+const s = "Hello";
+console.log(s.length, s.toUpperCase(), s[0], s.at(-1)); // 5 HELLO H o
+console.log(s.includes("ell"), s.slice(1, 4));          // true ell
+</script>
+<script type="text/x-code" id="code-ops-java">
+public class Ops {
+    public static void main(String[] args) {
+        int a = 17, b = 5;
+        System.out.println(a / b);           // 3   — int / int = int (truncated)
+        System.out.println(a % b);           // 2
+        System.out.println((double) a / b);  // 3.4 — cast first
+        System.out.println(Math.pow(a, 2));  // 289.0
+
+        String s = "Hello";
+        System.out.println(s.length() + " " + s.toUpperCase());     // 5 HELLO
+        System.out.println(s.charAt(0) + " " + s.substring(1, 4));  // H ell
+        System.out.println(s.equals("Hello"));  // true — never compare strings with ==
+    }
+}
+</script>
+<script type="text/x-code" id="code-ops-c">
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    int a = 17, b = 5;
+    printf("%d %d\n", a / b, a % b);       // 3 2 — integer division truncates
+    printf("%.1f\n", (double)a / b);       // 3.4
+
+    char s[32] = "Hello";                  // fixed-size array of chars
+    printf("%zu\n", strlen(s));            // 5 — counts up to the '\0' terminator
+    strcat(s, ", World");                  // appends — YOU must ensure there's room
+    printf("%s %c\n", s, s[0]);            // Hello, World H
+    printf("%d\n", strcmp(s, "Hi") < 0);   // 1 — compare with strcmp, never ==
+    return 0;
+}
+</script>
+<script type="text/x-code" id="code-ops-cpp">
+#include <iostream>
+#include <string>
+#include <cmath>
+
+int main() {
+    int a = 17, b = 5;
+    std::cout << a / b << ' ' << a % b << '\n';        // 3 2
+    std::cout << static_cast<double>(a) / b << '\n';   // 3.4
+    std::cout << std::pow(a, 2) << '\n';               // 289
+
+    std::string s = "Hello";
+    s += ", World";                                     // grows safely
+    std::cout << s.size() << ' ' << s.substr(0, 4) << '\n';           // 12 Hell
+    std::cout << (s.find("World") != std::string::npos) << '\n';      // 1
+}
+</script>
+<script type="text/x-code" id="code-ops-csharp">
+int a = 17, b = 5;
+Console.WriteLine(a / b);           // 3  (integer division)
+Console.WriteLine(a % b);           // 2
+Console.WriteLine((double)a / b);   // 3.4
+Console.WriteLine(Math.Pow(a, 2));  // 289
+
+string s = "Hello";
+Console.WriteLine(s.Length);             // 5
+Console.WriteLine(s.ToUpper());          // HELLO
+Console.WriteLine(s[1..4]);              // ell  (range syntax)
+Console.WriteLine(s.Contains("ell"));    // True
+Console.WriteLine(s == "Hello");         // True — == compares text in C#
+</script>
+<script type="text/x-code" id="code-ops-go">
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	a, b := 17, 5
+	fmt.Println(a/b, a%b)                 // 3 2
+	fmt.Println(float64(a) / float64(b))  // 3.4 — no implicit conversions in Go
+
+	s := "Hello"
+	fmt.Println(len(s), strings.ToUpper(s), s[1:4]) // 5 HELLO ell
+	fmt.Println(strings.Contains(s, "ell"))         // true
+	fmt.Println(s + ", World")
+}
+</script>
+<script type="text/x-code" id="code-ops-rust">
+fn main() {
+    let (a, b) = (17, 5);
+    println!("{} {}", a / b, a % b);        // 3 2
+    println!("{}", a as f64 / b as f64);    // 3.4 — explicit casts
+    println!("{}", i32::pow(a, 2));         // 289
+
+    let mut s = String::from("Hello");      // owned, growable
+    s.push_str(", World");
+    println!("{} {}", s.len(), s.to_uppercase()); // 12 HELLO, WORLD
+    println!("{}", &s[0..4]);               // Hell — a borrowed slice
+    println!("{}", s.contains("World"));    // true
+}
+</script>
+
+<script type="text/x-code" id="code-if-python">
+temp = 31
+raining = False
+
+if temp > 30:
+    print("Hot")
+elif temp > 15:            # only checked if the test above was False
+    print("Pleasant")
+else:
+    print("Cold")
+
+if temp > 25 and not raining:     # and / or / not are plain words
+    print("Beach day")
+
+label = "even" if temp % 2 == 0 else "odd"   # conditional expression
+
+match temp // 10:          # structural pattern matching (3.10+)
+    case 3:
+        print("thirties")
+    case _:
+        print("something else")
+</script>
+<script type="text/x-code" id="code-if-javascript">
+const temp = 31;
+const raining = false;
+
+if (temp > 30) {
+  console.log("Hot");
+} else if (temp > 15) {
+  console.log("Pleasant");
+} else {
+  console.log("Cold");
+}
+
+if (temp > 25 && !raining) console.log("Beach day");
+
+const label = temp % 2 === 0 ? "even" : "odd";   // ternary operator
+
+switch (Math.floor(temp / 10)) {
+  case 3: console.log("thirties"); break;        // forget break = fall-through!
+  default: console.log("something else");
+}
+</script>
+<script type="text/x-code" id="code-if-java">
+public class Decide {
+    public static void main(String[] args) {
+        int temp = 31;
+        boolean raining = false;
+
+        if (temp > 30) {
+            System.out.println("Hot");
+        } else if (temp > 15) {
+            System.out.println("Pleasant");
+        } else {
+            System.out.println("Cold");
+        }
+
+        if (temp > 25 && !raining) System.out.println("Beach day");
+
+        String label = (temp % 2 == 0) ? "even" : "odd";
+
+        String decade = switch (temp / 10) {   // switch expression (Java 14+)
+            case 3 -> "thirties";
+            default -> "something else";
+        };
+        System.out.println(label + ", " + decade);
+    }
+}
+</script>
+<script type="text/x-code" id="code-if-c">
+#include <stdio.h>
+#include <stdbool.h>
+
+int main(void) {
+    int temp = 31;
+    bool raining = false;
+
+    if (temp > 30) {
+        printf("Hot\n");
+    } else if (temp > 15) {
+        printf("Pleasant\n");
+    } else {
+        printf("Cold\n");
+    }
+
+    if (temp > 25 && !raining) printf("Beach day\n");
+
+    // In C any non-zero value is "true". if (x = 5) is a classic bug (assignment!)
+    switch (temp / 10) {
+        case 3: printf("thirties\n"); break;
+        default: printf("something else\n");
+    }
+    return 0;
+}
+</script>
+<script type="text/x-code" id="code-if-cpp">
+#include <iostream>
+
+int main() {
+    int temp = 31;
+    bool raining = false;
+
+    if (temp > 30) {
+        std::cout << "Hot\n";
+    } else if (temp > 15) {
+        std::cout << "Pleasant\n";
+    } else {
+        std::cout << "Cold\n";
+    }
+
+    if (temp > 25 && !raining) std::cout << "Beach day\n";
+
+    // C++17: declare a variable scoped to the if statement itself
+    if (int decade = temp / 10; decade == 3) {
+        std::cout << "thirties\n";
+    }
+
+    const char* label = (temp % 2 == 0) ? "even" : "odd";
+    std::cout << label << '\n';
+}
+</script>
+<script type="text/x-code" id="code-if-csharp">
+int temp = 31;
+bool raining = false;
+
+if (temp > 30)
+    Console.WriteLine("Hot");
+else if (temp > 15)
+    Console.WriteLine("Pleasant");
+else
+    Console.WriteLine("Cold");
+
+if (temp > 25 && !raining) Console.WriteLine("Beach day");
+
+string decade = (temp / 10) switch   // switch expression
+{
+    3 => "thirties",
+    _ => "something else",
+};
+Console.WriteLine(decade);
+</script>
+<script type="text/x-code" id="code-if-go">
+package main
+
+import "fmt"
+
+func main() {
+	temp := 31
+	raining := false
+
+	if temp > 30 { // no parentheses; braces are mandatory
+		fmt.Println("Hot")
+	} else if temp > 15 {
+		fmt.Println("Pleasant")
+	} else {
+		fmt.Println("Cold")
+	}
+
+	if temp > 25 && !raining {
+		fmt.Println("Beach day")
+	}
+
+	switch temp / 10 { // no break needed — Go cases don't fall through
+	case 3:
+		fmt.Println("thirties")
+	default:
+		fmt.Println("something else")
+	}
+}
+</script>
+<script type="text/x-code" id="code-if-rust">
+fn main() {
+    let temp = 31;
+    let raining = false;
+
+    if temp > 30 {
+        println!("Hot");
+    } else if temp > 15 {
+        println!("Pleasant");
+    } else {
+        println!("Cold");
+    }
+
+    if temp > 25 && !raining {
+        println!("Beach day");
+    }
+
+    // if is an expression — it produces a value
+    let label = if temp % 2 == 0 { "even" } else { "odd" };
+
+    // match must cover every possible value (exhaustive)
+    let decade = match temp / 10 {
+        3 => "thirties",
+        _ => "something else",
+    };
+    println!("{label}, {decade}");
+}
+</script>
+
+<script type="text/x-code" id="code-loops-python">
+for i in range(1, 6):        # 1,2,3,4,5 — the end is exclusive
+    print(i, end=" ")
+print()
+
+fruits = ["apple", "mango", "kiwi"]
+for index, fruit in enumerate(fruits):   # index + value together
+    print(index, fruit)
+
+n = 3
+while n > 0:                 # repeats while the condition is True
+    print("T-minus", n)
+    n -= 1
+
+for x in range(10):
+    if x == 2: continue      # skip to the next iteration
+    if x == 5: break         # leave the loop entirely
+    print(x)                 # 0 1 3 4
+</script>
+<script type="text/x-code" id="code-loops-javascript">
+for (let i = 1; i <= 5; i++) {        // init; condition; step
+  process.stdout.write(i + " ");
+}
+console.log();
+
+const fruits = ["apple", "mango", "kiwi"];
+for (const fruit of fruits) console.log(fruit);         // values
+fruits.forEach((fruit, i) => console.log(i, fruit));     // with index
+
+let n = 3;
+while (n > 0) {
+  console.log("T-minus", n);
+  n--;
+}
+// for...in loops over KEYS — use for...of for arrays
+</script>
+<script type="text/x-code" id="code-loops-java">
+import java.util.List;
+
+public class Loops {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 5; i++) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+
+        List<String> fruits = List.of("apple", "mango", "kiwi");
+        for (String fruit : fruits) {          // enhanced for-each
+            System.out.println(fruit);
+        }
+
+        int n = 3;
+        while (n > 0) {
+            System.out.println("T-minus " + n);
+            n--;
+        }
+    }
+}
+</script>
+<script type="text/x-code" id="code-loops-c">
+#include <stdio.h>
+
+int main(void) {
+    for (int i = 1; i <= 5; i++) {
+        printf("%d ", i);
+    }
+    printf("\n");
+
+    const char *fruits[] = {"apple", "mango", "kiwi"};
+    int count = sizeof fruits / sizeof fruits[0];   // array-length trick
+    for (int i = 0; i < count; i++) {
+        printf("%d %s\n", i, fruits[i]);
+    }
+
+    int n = 3;
+    while (n > 0) {
+        printf("T-minus %d\n", n);
+        n--;
+    }
+    return 0;
+}
+</script>
+<script type="text/x-code" id="code-loops-cpp">
+#include <iostream>
+#include <vector>
+#include <string>
+
+int main() {
+    for (int i = 1; i <= 5; ++i) std::cout << i << ' ';
+    std::cout << '\n';
+
+    std::vector<std::string> fruits{"apple", "mango", "kiwi"};
+    for (const auto& fruit : fruits) {     // range-for; const& avoids copies
+        std::cout << fruit << '\n';
+    }
+
+    int n = 3;
+    while (n > 0) {
+        std::cout << "T-minus " << n << '\n';
+        --n;
+    }
+}
+</script>
+<script type="text/x-code" id="code-loops-csharp">
+for (int i = 1; i <= 5; i++)
+    Console.Write($"{i} ");
+Console.WriteLine();
+
+string[] fruits = { "apple", "mango", "kiwi" };
+foreach (var fruit in fruits)
+    Console.WriteLine(fruit);
+
+int n = 3;
+while (n > 0)
+{
+    Console.WriteLine($"T-minus {n}");
+    n--;
+}
+</script>
+<script type="text/x-code" id="code-loops-go">
+package main
+
+import "fmt"
+
+func main() {
+	for i := 1; i <= 5; i++ { // Go has exactly one loop keyword: for
+		fmt.Print(i, " ")
+	}
+	fmt.Println()
+
+	fruits := []string{"apple", "mango", "kiwi"}
+	for i, fruit := range fruits { // range yields index and value
+		fmt.Println(i, fruit)
+	}
+
+	n := 3
+	for n > 0 { // a "while" loop is just for + condition
+		fmt.Println("T-minus", n)
+		n--
+	}
+}
+</script>
+<script type="text/x-code" id="code-loops-rust">
+fn main() {
+    for i in 1..=5 {                  // ..= includes the end
+        print!("{i} ");
+    }
+    println!();
+
+    let fruits = ["apple", "mango", "kiwi"];
+    for (i, fruit) in fruits.iter().enumerate() {
+        println!("{i} {fruit}");
+    }
+
+    let mut n = 3;
+    while n > 0 {
+        println!("T-minus {n}");
+        n -= 1;
+    }
+
+    let mut tries = 0;
+    let result = loop {               // infinite loop that can return a value
+        tries += 1;
+        if tries == 3 { break tries * 10; }
+    };
+    println!("{result}");             // 30
+}
+</script>
+
+<script type="text/x-code" id="code-func-python">
+def greet(name, greeting="Hello"):      # default parameter
+    """Docstring: explains what the function does."""
+    return f"{greeting}, {name}!"
+
+def min_max(numbers):
+    return min(numbers), max(numbers)   # returns a tuple
+
+def factorial(n):
+    if n <= 1:                          # base case stops the recursion
+        return 1
+    return n * factorial(n - 1)         # each call waits on the next
+
+print(greet("Ada"))                     # Hello, Ada!
+print(greet("Linus", greeting="Hi"))    # keyword argument
+lo, hi = min_max([4, 9, 1])             # tuple unpacking
+print(lo, hi, factorial(5))             # 1 9 120
+</script>
+<script type="text/x-code" id="code-func-javascript">
+function greet(name, greeting = "Hello") {
+  return `${greeting}, ${name}!`;
+}
+
+const square = (x) => x * x;              // arrow function
+
+function minMax(numbers) {
+  return [Math.min(...numbers), Math.max(...numbers)];
+}
+
+function factorial(n) {
+  return n <= 1 ? 1 : n * factorial(n - 1);
+}
+
+console.log(greet("Ada"));
+const [lo, hi] = minMax([4, 9, 1]);       // destructuring
+console.log(lo, hi, square(7), factorial(5)); // 1 9 49 120
+</script>
+<script type="text/x-code" id="code-func-java">
+public class Funcs {
+    // static = belongs to the class; callable without creating an object
+    static String greet(String name) {
+        return greet(name, "Hello");      // overloading instead of defaults
+    }
+
+    static String greet(String name, String greeting) {
+        return greeting + ", " + name + "!";
+    }
+
+    static long factorial(int n) {
+        return n <= 1 ? 1 : n * factorial(n - 1);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(greet("Ada"));
+        System.out.println(greet("Linus", "Hi"));
+        System.out.println(factorial(5));   // 120
+    }
+}
+</script>
+<script type="text/x-code" id="code-func-c">
+#include <stdio.h>
+
+// A prototype declares the function before main uses it
+long factorial(int n);
+
+// C can't return two values — pass pointers so the function can write back
+void min_max(const int *arr, int len, int *lo, int *hi) {
+    *lo = *hi = arr[0];
+    for (int i = 1; i < len; i++) {
+        if (arr[i] < *lo) *lo = arr[i];
+        if (arr[i] > *hi) *hi = arr[i];
+    }
+}
+
+int main(void) {
+    int nums[] = {4, 9, 1};
+    int lo, hi;
+    min_max(nums, 3, &lo, &hi);          // & = "address of"
+    printf("%d %d %ld\n", lo, hi, factorial(5));   // 1 9 120
+    return 0;
+}
+
+long factorial(int n) {
+    return n <= 1 ? 1 : n * factorial(n - 1);
+}
+</script>
+<script type="text/x-code" id="code-func-cpp">
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <utility>
+
+std::string greet(const std::string& name, const std::string& greeting = "Hello") {
+    return greeting + ", " + name + "!";
+}
+
+std::pair<int, int> minMax(int a, int b, int c) {
+    return { std::min({a, b, c}), std::max({a, b, c}) };
+}
+
+long factorial(int n) { return n <= 1 ? 1 : n * factorial(n - 1); }
+
+int main() {
+    auto square = [](int x) { return x * x; };   // lambda
+    auto [lo, hi] = minMax(4, 9, 1);             // structured binding (C++17)
+    std::cout << greet("Ada") << '\n';
+    std::cout << lo << ' ' << hi << ' ' << square(7) << ' ' << factorial(5) << '\n';
+}
+</script>
+<script type="text/x-code" id="code-func-csharp">
+static string Greet(string name, string greeting = "Hello") => $"{greeting}, {name}!";
+
+static (int Lo, int Hi) MinMax(int[] nums) => (nums.Min(), nums.Max()); // tuple return
+
+static long Factorial(int n) => n <= 1 ? 1 : n * Factorial(n - 1);
+
+Console.WriteLine(Greet("Ada"));
+Console.WriteLine(Greet("Linus", greeting: "Hi"));   // named argument
+var (lo, hi) = MinMax(new[] { 4, 9, 1 });
+Console.WriteLine($"{lo} {hi} {Factorial(5)}");      // 1 9 120
+</script>
+<script type="text/x-code" id="code-func-go">
+package main
+
+import "fmt"
+
+func greet(name string) string {
+	return "Hello, " + name + "!"
+}
+
+// Go functions can return multiple values — idiomatic for (result, error)
+func minMax(nums []int) (int, int) {
+	lo, hi := nums[0], nums[0]
+	for _, n := range nums {
+		if n < lo {
+			lo = n
+		}
+		if n > hi {
+			hi = n
+		}
+	}
+	return lo, hi
+}
+
+func factorial(n int) int {
+	if n <= 1 {
+		return 1
+	}
+	return n * factorial(n-1)
+}
+
+func main() {
+	square := func(x int) int { return x * x } // a function value
+	lo, hi := minMax([]int{4, 9, 1})
+	fmt.Println(greet("Ada"), lo, hi, square(7), factorial(5))
+}
+</script>
+<script type="text/x-code" id="code-func-rust">
+fn greet(name: &str) -> String {         // parameter types are required
+    format!("Hello, {name}!")            // no semicolon = this is the return value
+}
+
+fn min_max(nums: &[i32]) -> (i32, i32) {
+    let lo = *nums.iter().min().unwrap();
+    let hi = *nums.iter().max().unwrap();
+    (lo, hi)
+}
+
+fn factorial(n: u64) -> u64 {
+    if n <= 1 { 1 } else { n * factorial(n - 1) }
+}
+
+fn main() {
+    let square = |x: i32| x * x;         // closure
+    let (lo, hi) = min_max(&[4, 9, 1]);
+    println!("{} {lo} {hi} {} {}", greet("Ada"), square(7), factorial(5));
+}
+</script>
+
+<script type="text/x-code" id="code-coll-python">
+nums = [5, 3, 8]
+nums.append(1)               # [5, 3, 8, 1]
+nums.sort()                  # in place → [1, 3, 5, 8]
+print(nums[0], len(nums))    # 1 4
+
+squares = [n * n for n in nums if n > 2]   # list comprehension
+print(squares)               # [9, 25, 64]
+
+ages = {"ada": 36, "linus": 54}   # dict: key → value (a hash map)
+ages["grace"] = 85
+print(ages.get("bob", 0))         # 0 — a default instead of KeyError
+for name, age in ages.items():
+    print(name, age)
+
+unique = {1, 2, 2, 3}        # set → {1, 2, 3}
+point = (3, 4)               # tuple: immutable
+</script>
+<script type="text/x-code" id="code-coll-javascript">
+const nums = [5, 3, 8];
+nums.push(1);
+nums.sort((a, b) => a - b);      // default sort compares as STRINGS — pass a comparator
+console.log(nums[0], nums.length);   // 1 4
+
+const squares = nums.filter(n => n > 2).map(n => n * n);
+console.log(squares);                // [9, 25, 64]
+
+const ages = new Map([["ada", 36], ["linus", 54]]);
+ages.set("grace", 85);
+console.log(ages.get("bob") ?? 0);   // 0
+for (const [name, age] of ages) console.log(name, age);
+
+const user = { name: "Ada", age: 36 };   // plain object as a record
+const unique = new Set([1, 2, 2, 3]);    // {1, 2, 3}
+</script>
+<script type="text/x-code" id="code-coll-java">
+import java.util.*;
+
+public class Coll {
+    public static void main(String[] args) {
+        List<Integer> nums = new ArrayList<>(List.of(5, 3, 8));
+        nums.add(1);
+        Collections.sort(nums);                         // [1, 3, 5, 8]
+        System.out.println(nums.get(0) + " " + nums.size());
+
+        List<Integer> squares = nums.stream()
+            .filter(n -> n > 2).map(n -> n * n).toList();
+        System.out.println(squares);                    // [9, 25, 64]
+
+        Map<String, Integer> ages = new HashMap<>();
+        ages.put("ada", 36);
+        ages.put("linus", 54);
+        System.out.println(ages.getOrDefault("bob", 0));
+        for (var e : ages.entrySet())
+            System.out.println(e.getKey() + " " + e.getValue());
+    }
+}
+</script>
+<script type="text/x-code" id="code-coll-c">
+#include <stdio.h>
+#include <stdlib.h>
+
+int cmp(const void *a, const void *b) {      // comparator for qsort
+    return *(const int *)a - *(const int *)b;
+}
+
+int main(void) {
+    int fixed[4] = {5, 3, 8, 1};             // size fixed at compile time
+    qsort(fixed, 4, sizeof(int), cmp);
+    printf("%d\n", fixed[0]);                // 1
+
+    // A growable array: borrow heap memory, grow it with realloc
+    int cap = 2, len = 0;
+    int *list = malloc(cap * sizeof *list);
+    for (int i = 1; i <= 5; i++) {
+        if (len == cap) {
+            cap *= 2;
+            list = realloc(list, cap * sizeof *list);
+        }
+        list[len++] = i * i;
+    }
+    for (int i = 0; i < len; i++) printf("%d ", list[i]);
+    printf("\n");
+    free(list);                              // every malloc needs a free
+    // C has no built-in hash map — you write one or use a library.
+    return 0;
+}
+</script>
+<script type="text/x-code" id="code-coll-cpp">
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+int main() {
+    std::vector<int> nums{5, 3, 8};
+    nums.push_back(1);
+    std::sort(nums.begin(), nums.end());          // [1, 3, 5, 8]
+    std::cout << nums[0] << ' ' << nums.size() << '\n';
+
+    std::unordered_map<std::string, int> ages{{"ada", 36}, {"linus", 54}};
+    ages["grace"] = 85;
+    if (ages.find("bob") == ages.end())
+        std::cout << "bob not found\n";           // ages["bob"] would INSERT bob!
+    for (const auto& [name, age] : ages)
+        std::cout << name << ' ' << age << '\n';
+}
+</script>
+<script type="text/x-code" id="code-coll-csharp">
+var nums = new List<int> { 5, 3, 8 };
+nums.Add(1);
+nums.Sort();                                       // [1, 3, 5, 8]
+Console.WriteLine($"{nums[0]} {nums.Count}");
+
+var squares = nums.Where(n => n > 2).Select(n => n * n).ToList();   // LINQ
+Console.WriteLine(string.Join(", ", squares));    // 9, 25, 64
+
+var ages = new Dictionary<string, int> { ["ada"] = 36, ["linus"] = 54 };
+ages["grace"] = 85;
+Console.WriteLine(ages.GetValueOrDefault("bob", 0));
+foreach (var (name, age) in ages)
+    Console.WriteLine($"{name} {age}");
+</script>
+<script type="text/x-code" id="code-coll-go">
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func main() {
+	nums := []int{5, 3, 8}  // slice: a growable view over an array
+	nums = append(nums, 1)  // append may return a NEW slice — always reassign
+	sort.Ints(nums)
+	fmt.Println(nums[0], len(nums)) // 1 4
+
+	ages := map[string]int{"ada": 36, "linus": 54}
+	ages["grace"] = 85
+	age, ok := ages["bob"] // "comma ok" distinguishes missing from zero
+	fmt.Println(age, ok)   // 0 false
+	for name, age := range ages { // map order is deliberately random
+		fmt.Println(name, age)
+	}
+}
+</script>
+<script type="text/x-code" id="code-coll-rust">
+use std::collections::HashMap;
+
+fn main() {
+    let mut nums = vec![5, 3, 8];       // Vec<i32>: growable, heap-allocated
+    nums.push(1);
+    nums.sort();
+    println!("{} {}", nums[0], nums.len());   // 1 4
+
+    let squares: Vec<i32> = nums.iter().filter(|&&n| n > 2).map(|n| n * n).collect();
+    println!("{:?}", squares);          // [9, 25, 64]
+
+    let mut ages = HashMap::new();
+    ages.insert("ada", 36);
+    ages.insert("linus", 54);
+    match ages.get("bob") {             // get returns Option: Some(v) or None
+        Some(age) => println!("bob is {age}"),
+        None => println!("no bob"),
+    }
+    for (name, age) in &ages {
+        println!("{name} {age}");
+    }
+}
+</script>
+
+<script type="text/x-code" id="code-obj-python">
+class Account:
+    def __init__(self, owner, balance=0):   # constructor
+        self.owner = owner                  # self = this particular object
+        self._balance = balance             # _ = "internal, please don't touch"
+
+    def deposit(self, amount):
+        if amount <= 0:
+            raise ValueError("amount must be positive")
+        self._balance += amount
+
+    @property
+    def balance(self):                      # read like a field: acct.balance
+        return self._balance
+
+    def __str__(self):                      # what print() shows
+        return f"{self.owner}: ₹{self._balance}"
+
+class Savings(Account):                     # inheritance
+    def add_interest(self, rate):
+        self.deposit(self.balance * rate)
+
+acct = Savings("Ada", 1000)
+acct.deposit(500)
+acct.add_interest(0.1)
+print(acct)                                 # Ada: ₹1650.0
+</script>
+<script type="text/x-code" id="code-obj-javascript">
+class Account {
+  #balance;                        // # = truly private field
+
+  constructor(owner, balance = 0) {
+    this.owner = owner;
+    this.#balance = balance;
+  }
+
+  deposit(amount) {
+    if (amount <= 0) throw new Error("amount must be positive");
+    this.#balance += amount;
+  }
+
+  get balance() { return this.#balance; }
+
+  toString() { return `${this.owner}: ₹${this.#balance}`; }
+}
+
+class Savings extends Account {
+  addInterest(rate) { this.deposit(this.balance * rate); }
+}
+
+const acct = new Savings("Ada", 1000);
+acct.deposit(500);
+acct.addInterest(0.1);
+console.log(String(acct));         // Ada: ₹1650
+</script>
+<script type="text/x-code" id="code-obj-java">
+// Bank.java — the class with main() comes first so `java Bank.java` finds it
+public class Bank {
+    public static void main(String[] args) {
+        Savings acct = new Savings("Ada", 1000);
+        acct.deposit(500);
+        acct.addInterest(0.1);
+        System.out.println(acct);   // Ada: ₹1650.0
+    }
+}
+
+class Account {
+    private final String owner;     // private = only this class can touch it
+    protected double balance;       // protected = subclasses can too
+
+    Account(String owner, double balance) {   // constructor
+        this.owner = owner;
+        this.balance = balance;
+    }
+
+    void deposit(double amount) {
+        if (amount <= 0) throw new IllegalArgumentException("amount must be positive");
+        balance += amount;
+    }
+
+    double getBalance() { return balance; }
+
+    @Override
+    public String toString() { return owner + ": ₹" + balance; }
+}
+
+class Savings extends Account {
+    Savings(String owner, double balance) { super(owner, balance); }
+    void addInterest(double rate) { deposit(balance * rate); }
+}
+</script>
+<script type="text/x-code" id="code-obj-c">
+#include <stdio.h>
+
+// C has no classes: a struct groups data; functions take a pointer to it
+typedef struct {
+    char owner[32];
+    double balance;
+} Account;
+
+int account_deposit(Account *a, double amount) {
+    if (amount <= 0) return -1;          // error code instead of an exception
+    a->balance += amount;                // -> = field access through a pointer
+    return 0;
+}
+
+void account_add_interest(Account *a, double rate) {
+    account_deposit(a, a->balance * rate);
+}
+
+int main(void) {
+    Account acct = { "Ada", 1000 };
+    account_deposit(&acct, 500);
+    account_add_interest(&acct, 0.1);
+    printf("%s: Rs %.2f\n", acct.owner, acct.balance);   // Ada: Rs 1650.00
+    return 0;
+}
+</script>
+<script type="text/x-code" id="code-obj-cpp">
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <utility>
+
+class Account {
+public:
+    Account(std::string owner, double balance = 0)
+        : owner_(std::move(owner)), balance_(balance) {}   // initializer list
+
+    void deposit(double amount) {
+        if (amount <= 0) throw std::invalid_argument("amount must be positive");
+        balance_ += amount;
+    }
+    double balance() const { return balance_; }     // const = doesn't modify
+    const std::string& owner() const { return owner_; }
+
+private:
+    std::string owner_;
+    double balance_;
+};
+
+class Savings : public Account {
+public:
+    using Account::Account;                         // inherit constructors
+    void addInterest(double rate) { deposit(balance() * rate); }
+};
+
+int main() {
+    Savings acct("Ada", 1000);
+    acct.deposit(500);
+    acct.addInterest(0.1);
+    std::cout << acct.owner() << ": " << acct.balance() << '\n';   // Ada: 1650
+}
+</script>
+<script type="text/x-code" id="code-obj-csharp">
+var acct = new Savings("Ada", 1000);
+acct.Deposit(500);
+acct.AddInterest(0.1m);
+Console.WriteLine(acct);                     // Ada: ₹1650.0
+
+class Account
+{
+    public string Owner { get; }                  // read-only property
+    public decimal Balance { get; private set; }  // decimal = exact, for money
+
+    public Account(string owner, decimal balance = 0)
+    {
+        Owner = owner;
+        Balance = balance;
+    }
+
+    public void Deposit(decimal amount)
+    {
+        if (amount <= 0) throw new ArgumentException("amount must be positive");
+        Balance += amount;
+    }
+
+    public override string ToString() => $"{Owner}: ₹{Balance}";
+}
+
+class Savings : Account
+{
+    public Savings(string owner, decimal balance) : base(owner, balance) { }
+    public void AddInterest(decimal rate) => Deposit(Balance * rate);
+}
+</script>
+<script type="text/x-code" id="code-obj-go">
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+// Go has no classes: a struct plus methods attached to it
+type Account struct {
+	Owner   string  // Capitalised = exported (public)
+	balance float64 // lowercase = private to the package
+}
+
+func NewAccount(owner string, balance float64) *Account { // constructor by convention
+	return &Account{Owner: owner, balance: balance}
+}
+
+// (a *Account) is the receiver — like self/this. A pointer, so we can modify it.
+func (a *Account) Deposit(amount float64) error {
+	if amount <= 0 {
+		return errors.New("amount must be positive")
+	}
+	a.balance += amount
+	return nil
+}
+
+func (a *Account) Balance() float64 { return a.balance }
+
+// Composition instead of inheritance: Savings embeds Account
+type Savings struct {
+	*Account
+}
+
+func (s Savings) AddInterest(rate float64) { s.Deposit(s.Balance() * rate) }
+
+func main() {
+	acct := Savings{NewAccount("Ada", 1000)}
+	acct.Deposit(500)
+	acct.AddInterest(0.1)
+	fmt.Printf("%s: ₹%.0f\n", acct.Owner, acct.Balance()) // Ada: ₹1650
+}
+</script>
+<script type="text/x-code" id="code-obj-rust">
+struct Account {
+    owner: String,
+    balance: f64,
+}
+
+impl Account {                          // methods live in an impl block
+    fn new(owner: &str, balance: f64) -> Self {
+        Account { owner: owner.to_string(), balance }
+    }
+
+    // &mut self: this method borrows the account mutably
+    fn deposit(&mut self, amount: f64) -> Result<(), String> {
+        if amount <= 0.0 {
+            return Err("amount must be positive".into());
+        }
+        self.balance += amount;
+        Ok(())
+    }
+}
+
+// Traits = shared behaviour (Rust's answer to interfaces/inheritance)
+trait Interest {
+    fn add_interest(&mut self, rate: f64);
+}
+
+impl Interest for Account {
+    fn add_interest(&mut self, rate: f64) {
+        let extra = self.balance * rate;
+        self.deposit(extra).unwrap();
+    }
+}
+
+fn main() {
+    let mut acct = Account::new("Ada", 1000.0);
+    acct.deposit(500.0).unwrap();
+    acct.add_interest(0.1);
+    println!("{}: ₹{}", acct.owner, acct.balance);   // Ada: ₹1650
+}
+</script>
+
+<script type="text/x-code" id="code-err-python">
+def safe_divide(a_text, b_text):
+    try:
+        a = int(a_text)                 # may raise ValueError
+        b = int(b_text)
+        return a / b                    # may raise ZeroDivisionError
+    except ValueError:
+        print("Not a number:", a_text, b_text)
+    except ZeroDivisionError:
+        print("Can't divide by zero")
+    finally:
+        print("done")                   # runs no matter what happened
+
+print(safe_divide("10", "2"))    # done, then 5.0
+print(safe_divide("10", "0"))    # Can't divide by zero, done, None
+print(safe_divide("ten", "2"))   # Not a number: ten 2, done, None
+</script>
+<script type="text/x-code" id="code-err-javascript">
+function safeDivide(aText, bText) {
+  const a = Number(aText), b = Number(bText);
+  // JS doesn't throw on bad math: 10/0 is Infinity, Number("ten") is NaN
+  if (Number.isNaN(a) || Number.isNaN(b)) throw new TypeError("Not a number");
+  if (b === 0) throw new RangeError("Can't divide by zero");
+  return a / b;
+}
+
+for (const [x, y] of [["10", "2"], ["10", "0"], ["ten", "2"]]) {
+  try {
+    console.log(safeDivide(x, y));
+  } catch (err) {
+    console.log(`${err.name}: ${err.message}`);
+  } finally {
+    console.log("done");
+  }
+}
+</script>
+<script type="text/x-code" id="code-err-java">
+public class Errors {
+    static int safeDivide(String aText, String bText) {
+        int a = Integer.parseInt(aText);   // throws NumberFormatException
+        int b = Integer.parseInt(bText);
+        return a / b;                      // throws ArithmeticException on 0
+    }
+
+    public static void main(String[] args) {
+        String[][] inputs = {{"10", "2"}, {"10", "0"}, {"ten", "2"}};
+        for (String[] in : inputs) {
+            try {
+                System.out.println(safeDivide(in[0], in[1]));
+            } catch (NumberFormatException e) {
+                System.out.println("Not a number: " + e.getMessage());
+            } catch (ArithmeticException e) {
+                System.out.println("Can't divide by zero");
+            } finally {
+                System.out.println("done");
+            }
+        }
+    }
+}
+</script>
+<script type="text/x-code" id="code-err-c">
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+// C has no exceptions: return a status code, deliver the result via a pointer
+int safe_divide(const char *a_text, const char *b_text, double *out) {
+    char *end;
+    errno = 0;
+    long a = strtol(a_text, &end, 10);
+    if (*end != '\0' || errno) return 1;        // 1 = not a number
+    long b = strtol(b_text, &end, 10);
+    if (*end != '\0' || errno) return 1;
+    if (b == 0) return 2;                       // 2 = division by zero
+    *out = (double)a / b;
+    return 0;                                   // 0 = success
+}
+
+int main(void) {
+    const char *inputs[][2] = {{"10", "2"}, {"10", "0"}, {"ten", "2"}};
+    for (int i = 0; i < 3; i++) {
+        double result;
+        int status = safe_divide(inputs[i][0], inputs[i][1], &result);
+        if (status == 0)      printf("%.1f\n", result);
+        else if (status == 1) printf("Not a number\n");
+        else                  printf("Can't divide by zero\n");
+    }
+    return 0;
+}
+</script>
+<script type="text/x-code" id="code-err-cpp">
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <utility>
+
+double safeDivide(const std::string& aText, const std::string& bText) {
+    int a = std::stoi(aText);               // throws std::invalid_argument
+    int b = std::stoi(bText);
+    if (b == 0) throw std::domain_error("Can't divide by zero"); // /0 itself won't throw
+    return static_cast<double>(a) / b;
+}
+
+int main() {
+    std::pair<std::string, std::string> inputs[] = {{"10", "2"}, {"10", "0"}, {"ten", "2"}};
+    for (const auto& [x, y] : inputs) {
+        try {
+            std::cout << safeDivide(x, y) << '\n';
+        } catch (const std::invalid_argument&) {
+            std::cout << "Not a number\n";
+        } catch (const std::exception& e) {     // catch the base class last
+            std::cout << e.what() << '\n';
+        }
+    }
+}
+</script>
+<script type="text/x-code" id="code-err-csharp">
+static double SafeDivide(string aText, string bText)
+{
+    int a = int.Parse(aText);          // throws FormatException
+    int b = int.Parse(bText);
+    return a / b;                      // int / 0 throws DivideByZeroException
+}
+
+foreach (var (x, y) in new[] { ("10", "2"), ("10", "0"), ("ten", "2") })
+{
+    try
+    {
+        Console.WriteLine(SafeDivide(x, y));
+    }
+    catch (FormatException)
+    {
+        Console.WriteLine("Not a number");
+    }
+    catch (DivideByZeroException)
+    {
+        Console.WriteLine("Can't divide by zero");
+    }
+    finally
+    {
+        Console.WriteLine("done");
+    }
+}
+// Tip: int.TryParse(text, out int n) avoids exceptions for expected bad input
+</script>
+<script type="text/x-code" id="code-err-go">
+package main
+
+import (
+	"errors"
+	"fmt"
+	"strconv"
+)
+
+var ErrDivZero = errors.New("can't divide by zero")
+
+// Errors are ordinary return values. No exceptions, no hidden control flow.
+func safeDivide(aText, bText string) (float64, error) {
+	a, err := strconv.Atoi(aText)
+	if err != nil {
+		return 0, fmt.Errorf("parsing %q: %w", aText, err) // wrap with context
+	}
+	b, err := strconv.Atoi(bText)
+	if err != nil {
+		return 0, fmt.Errorf("parsing %q: %w", bText, err)
+	}
+	if b == 0 {
+		return 0, ErrDivZero
+	}
+	return float64(a) / float64(b), nil
+}
+
+func main() {
+	for _, in := range [][2]string{{"10", "2"}, {"10", "0"}, {"ten", "2"}} {
+		result, err := safeDivide(in[0], in[1])
+		if errors.Is(err, ErrDivZero) {
+			fmt.Println("Can't divide by zero")
+		} else if err != nil {
+			fmt.Println("Error:", err)
+		} else {
+			fmt.Println(result)
+		}
+	}
+}
+</script>
+<script type="text/x-code" id="code-err-rust">
+use std::num::ParseIntError;
+
+enum DivError {
+    NotANumber(ParseIntError),
+    DivideByZero,
+}
+
+// Result<T, E> forces the caller to deal with failure
+fn safe_divide(a_text: &str, b_text: &str) -> Result<f64, DivError> {
+    let a: i32 = a_text.parse().map_err(DivError::NotANumber)?; // ? = return early on Err
+    let b: i32 = b_text.parse().map_err(DivError::NotANumber)?;
+    if b == 0 {
+        return Err(DivError::DivideByZero);
+    }
+    Ok(a as f64 / b as f64)
+}
+
+fn main() {
+    for (x, y) in [("10", "2"), ("10", "0"), ("ten", "2")] {
+        match safe_divide(x, y) {
+            Ok(v) => println!("{v}"),
+            Err(DivError::DivideByZero) => println!("Can't divide by zero"),
+            Err(DivError::NotANumber(e)) => println!("Not a number: {e}"),
+        }
+    }
+}
+</script>
+
+<script type="text/x-code" id="code-input-python">
+line = input("> ").strip()          # reads one line, without the newline
+cmd, _, arg = line.partition(" ")   # "add Buy milk" → "add", "Buy milk"
+</script>
+<script type="text/x-code" id="code-input-javascript">
+// save as tasks.mjs (an ES module) so top-level await works
+import * as readline from "node:readline/promises";
+import { stdin as input, stdout as output } from "node:process";
+
+const rl = readline.createInterface({ input, output });
+const line = (await rl.question("> ")).trim();
+const [cmd, ...rest] = line.split(" ");
+const arg = rest.join(" ");
+rl.close();   // call once, when the user quits
+</script>
+<script type="text/x-code" id="code-input-java">
+import java.util.Scanner;
+
+Scanner sc = new Scanner(System.in);     // create ONCE, reuse in the loop
+System.out.print("> ");
+String line = sc.nextLine().trim();
+String[] parts = line.split(" ", 2);     // limit 2: command + the rest
+String cmd = parts[0];
+String arg = parts.length > 1 ? parts[1] : "";
+</script>
+<script type="text/x-code" id="code-input-c">
+#include <stdio.h>
+#include <string.h>
+
+char line[256];
+printf("> ");
+if (fgets(line, sizeof line, stdin) == NULL) { /* EOF: treat as quit */ }
+line[strcspn(line, "\n")] = '\0';        // strip the trailing newline
+char *arg = strchr(line, ' ');           // split at the first space
+if (arg) *arg++ = '\0';                  // line = command, arg = the rest
+</script>
+<script type="text/x-code" id="code-input-cpp">
+#include <iostream>
+#include <string>
+
+std::string line;
+std::cout << "> ";
+if (!std::getline(std::cin, line)) { /* EOF: treat as quit */ }
+auto space = line.find(' ');
+std::string cmd = line.substr(0, space);
+std::string arg = space == std::string::npos ? "" : line.substr(space + 1);
+</script>
+<script type="text/x-code" id="code-input-csharp">
+Console.Write("> ");
+string line = Console.ReadLine()?.Trim() ?? "quit";   // null means end of input
+var parts = line.Split(' ', 2);                        // command + the rest
+string cmd = parts[0];
+string arg = parts.Length > 1 ? parts[1] : "";
+</script>
+<script type="text/x-code" id="code-input-go">
+import (
+	"bufio"
+	"os"
+	"strings"
+)
+
+scanner := bufio.NewScanner(os.Stdin) // create once, before the loop
+fmt.Print("> ")
+if !scanner.Scan() { /* EOF: treat as quit */ }
+line := strings.TrimSpace(scanner.Text())
+cmd, arg, _ := strings.Cut(line, " ") // split at the first space
+</script>
+<script type="text/x-code" id="code-input-rust">
+use std::io::{self, Write};
+
+print!("> ");
+io::stdout().flush().unwrap();            // print! doesn't flush by itself
+let mut line = String::new();
+io::stdin().read_line(&mut line).unwrap(); // returns 0 bytes at EOF
+let line = line.trim();
+let (cmd, arg) = line.split_once(' ').unwrap_or((line, ""));
+</script>
+
+<!-- per-language notes: "@lesson" then "lang: text" -->
+<script type="text/plain" id="notes">
+@hello
+python: Run it with `python hello.py` (`python3` on macOS/Linux). The `if __name__ == "__main__"` guard lets the same file be imported as a module later without running main().
+javascript: Run it with `node hello.js`. The same `console.log` line works in any browser: press F12 → Console and paste it.
+java: Two steps: `javac Hello.java` compiles to Hello.class (bytecode), then `java Hello` runs it — class name, no extension. Shortcut since Java 11: `java Hello.java`.
+c: Compile then run: `gcc hello.c -o hello && ./hello`. Without `\n`, output may sit in a buffer and appear late or mixed with your prompt.
+cpp: `g++ -std=c++20 hello.cpp -o hello && ./hello`. Prefer `'\n'` over `std::endl` — endl also flushes the buffer, which is slow inside loops.
+csharp: Run `dotnet run` inside the project folder. Only one file per project may use top-level statements; it becomes the entry point.
+go: `go run .` compiles and runs in one step. `go build` leaves a single standalone binary — nothing to install on the target machine.
+rust: `cargo run`. The `!` marks a macro: `println!` validates its format string at compile time, so a typo in `{}` is a build error, not a crash.
+@vars
+python: Python is dynamically typed: the value has a type, the name doesn't. `x = 5` then `x = "five"` is legal — and usually a bad idea.
+javascript: Default to `const`; use `let` only when you'll reassign. A `const` array or object can still be mutated — only the binding is fixed.
+java: Primitives (`int`, `double`, `boolean`) hold the value directly; everything else (`String`, arrays, objects) is a reference to an object on the heap.
+c: An uninitialised local holds garbage, not zero — always initialise. Signed overflow is undefined behaviour, not a wrap-around you can rely on.
+cpp: `auto` isn't dynamic typing — the type is fixed at compile time. Brace init `int x{3};` rejects lossy conversions like `int x{3.7};`.
+csharp: `var` is still static typing. Use `decimal` for money and `double` for science. Value types (`int`, `struct`) copy; classes are references.
+go: Every type has a zero value (`0`, `""`, `false`, `nil`), so there's no uninitialised memory. `:=` only works inside functions.
+rust: Immutable by default — you opt into change with `mut`. Shadowing (`let x = x + 1;`) makes a new variable, handy for transforming values.
+@ops
+python: Strings are immutable: `s.upper()` returns a new string. Negative indexes count from the end, and `s[::-1]` reverses.
+javascript: `+` with a string concatenates: `"5" + 1` is `"51"` while `"5" - 1` is `4`. Use `===` to avoid type-coercion surprises.
+java: `==` on objects compares references (same object?), not content — use `.equals()`. Building a string in a loop? Use `StringBuilder`.
+c: A C string is just bytes ending in `'\0'`. `strcat`/`strcpy` don't check sizes; overflowing corrupts memory. Prefer `snprintf`.
+cpp: Use `std::string`, not `char*`: it manages memory and `==` compares content. `s.at(i)` bounds-checks; `s[i]` doesn't.
+csharp: Strings are immutable; `$"..."` interpolation is the idiomatic way to build them. `StringBuilder` for heavy concatenation in loops.
+go: Strings are immutable UTF-8 bytes: `len("₹")` is 3. Use `for _, r := range s` to iterate characters (runes), not bytes.
+rust: `String` is owned and growable; `&str` is a borrowed view. Slicing through the middle of a multi-byte character panics — use `.chars()`.
+@if
+python: Indentation defines the block. Empty values (`0`, `""`, `[]`, `None`) are falsy, so `if items:` means "if the list isn't empty".
+javascript: Falsy values: `false`, `0`, `""`, `null`, `undefined`, `NaN`. Every `switch` case needs a `break` unless you want fall-through.
+java: Conditions must be real `boolean`s — `if (count)` won't compile. The arrow-style switch (`->`) never falls through.
+c: 0 is false, anything else is true. Compile with `-Wall` to catch `if (x = 5)` — an assignment where you meant `==`.
+cpp: Same rules as C plus a real `bool`. The C++17 `if (init; cond)` form keeps helper variables scoped to just that branch.
+csharp: Switch expressions (`=>`) return values and the compiler warns when a case is missing. Conditions must be `bool`.
+go: Go has no ternary operator, on purpose. `if` can run a statement first: `if err := f(); err != nil { ... }` — you'll write this constantly.
+rust: `if` and `match` are expressions that return values. `match` must be exhaustive, so forgetting a case is a compile error.
+@loops
+python: `range(a, b)` excludes `b`. Never add/remove items from a list while looping over it — loop over a copy: `for x in items[:]`.
+javascript: `for...of` for arrays, `for...in` for object keys. Methods like `map`, `filter` and `reduce` often replace hand-written loops.
+java: Removing items inside a for-each throws `ConcurrentModificationException` — use an `Iterator` or `removeIf`.
+c: The classic bug is off-by-one: an array of n items has indexes 0 to n−1, so the condition is `i < n`, never `i <= n`.
+cpp: Range-for with `const auto&` avoids copying every element. Fall back to index loops only when you need the index.
+csharp: The `foreach` variable is read-only. LINQ (`Where`, `Select`, `Sum`) replaces most filter/transform loops.
+go: `for` is the only loop. The `range` value is a copy — write to `slice[i]`, not the loop variable, to change elements.
+rust: Iterators are lazy and compile down to the same code as a hand-written loop. `loop` can `break` with a value.
+@func
+python: Never use a mutable default like `def f(x=[])` — that list is created once and shared by every call. Use `None` and create it inside.
+javascript: Arrow functions have no `this` of their own — perfect for callbacks, wrong for object methods that need `this`.
+java: Java always passes by value — for objects that value is a reference, so a method can mutate the object but not rebind the caller's variable.
+c: Arguments are copies. To let a function change a caller's variable, pass its address (a pointer), as `min_max` does.
+cpp: Pass large objects by `const&` (no copy), by `&` to modify, by value for small types like `int` and `double`.
+csharp: `=>` expression bodies are for one-liners. Named tuples `(int Lo, int Hi)` return several values without writing a class.
+go: Multiple returns are idiomatic: `value, err := f()`. Functions are first-class values you can store and pass around.
+rust: The last expression without a semicolon is the return value. `&str`/`&[T]` parameters borrow data without taking ownership.
+@coll
+python: Lists are ordered and mutable; tuples are immutable; dicts keep insertion order. Dict and set lookups are O(1) on average.
+javascript: Plain `sort()` compares as strings: `[10, 9, 1].sort()` gives `[1, 10, 9]`. Use `Map` when keys aren't strings or order matters.
+java: Declare the interface (`List`, `Map`), construct the class (`ArrayList`, `HashMap`). Generics hold objects: `Integer`, not `int`.
+c: An array forgets its length when passed to a function — always pass the length alongside. Real code must check `malloc`/`realloc` for NULL.
+cpp: `std::vector` is the default container. `map[key]` silently inserts a missing key — use `find` or `contains` (C++20) to check.
+csharp: `List<T>` and `Dictionary<K,V>` are the workhorses, and LINQ works on any collection. `TryGetValue` avoids double lookups.
+go: Slices share their backing array, so appends can surprise you. A nil map can be read but writing to it panics — create it first.
+rust: `Vec<T>` and `HashMap<K,V>` own their contents. Indexing out of bounds panics; `.get(i)` returns an `Option` instead.
+@obj
+python: Nothing is truly private — `_name` is a convention. Dunder methods (`__str__`, `__eq__`, `__len__`) plug your class into built-in syntax.
+javascript: Classes are syntax over prototypes. `#private` fields are enforced by the engine; `_underscore` is only a convention.
+java: Every class extends `Object`; override `toString`, `equals` and `hashCode` together. `record` (Java 16+) makes data classes one line.
+c: No methods, no inheritance — but a struct plus functions taking a pointer gets you surprisingly far. `->` dereferences then accesses.
+cpp: `class` members default to private, `struct` to public. RAII: destructors run automatically, so resources clean themselves up.
+csharp: Auto-properties (`{ get; private set; }`) replace getter/setter boilerplate. `record` types give value equality in one line.
+go: No classes or inheritance: structs, methods and interfaces. A type satisfies an interface just by having the methods — no `implements`.
+rust: Data (`struct`) and behaviour (`impl`, `trait`) are separate. There's no inheritance; traits + generics give polymorphism at zero runtime cost.
+@err
+python: Catch specific exceptions, never a bare `except:`. "Easier to ask forgiveness than permission" (try first, handle failure) is idiomatic.
+javascript: Arithmetic never throws (`1/0` is `Infinity`, bad parses give `NaN`), so validate yourself. Wrap `await` calls in try/catch.
+java: Checked exceptions (like `IOException`) must be caught or declared with `throws`; unchecked ones (`RuntimeException`) needn't be.
+c: Errors are return codes and `errno`. Always check return values — ignoring them is the single biggest source of C bugs.
+cpp: Integer division by zero is undefined behaviour, not an exception — check first. Catch by `const&`, most specific type first.
+csharp: Use `TryParse` for input you expect to be wrong sometimes; exceptions are for the exceptional. `using` disposes resources automatically.
+go: Check `if err != nil` immediately after every call that returns an error. Wrap with `%w` to add context and keep the original.
+rust: `Result` and `Option` make failure part of the type. `?` propagates errors upward; `unwrap()` crashes — fine in demos, not in real code.
+</script>
+
+<script>
+(()=>{
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const R=String.raw;
+const store={get(k,d){try{const v=localStorage.getItem('pg_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('pg_'+k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const md=s=>esc(s).replace(/`([^`]+)`/g,'<code>$1</code>');
+
+/* ===================== LANGUAGE DATA ===================== */
+const ORDER=['python','javascript','java','c','cpp','csharp','go','rust'];
+const L={
+python:{name:'Python',mono:'Py',color:'#5aa7ff',rgb:'90,167,255',lane:'interp',ext:'hello.py',year:1991,by:'Guido van Rossum',typing:'Dynamic, strong',kind:'Interpreted (bytecode VM)',ease:5,speed:2,uses:['Data & AI','Automation','Backend','Scripting'],
+ tag:'Reads almost like English. The default choice for data science, AI, automation and teaching.',
+ hello:'print("Hello, World!")',
+ what:`You're installing <b>CPython</b> — the official interpreter that reads <code>.py</code> files and executes them — plus <b>pip</b>, the package installer, and <b>venv</b>, which creates isolated per-project environments so one project's libraries never break another's.`,
+ steps:[
+  {t:'Install the interpreter',why:`Puts the <code>python</code> program on your machine and on PATH. Any 3.12+ release is fine for this course.`,cmd:{win:'winget install Python.Python.3.13',mac:'brew install python',linux:'sudo apt update && sudo apt install python3 python3-pip python3-venv'},note:`Windows alternative: the python.org installer — tick <b>"Add python.exe to PATH"</b> on the first screen. macOS needs Homebrew first (brew.sh). Fedora: <code>sudo dnf install python3</code>.`},
+  {t:'Verify it',why:`Proves the shell can find the interpreter through PATH. If this fails, nothing else will work — fix it first.`,cmd:{win:'python --version',mac:'python3 --version',linux:'python3 --version'}},
+  {t:'Create a project with a virtual environment',why:`<code>.venv</code> is a private copy of Python for this folder. Packages you install go here, not system-wide. Professionals do this for every project.`,cmd:{win:'mkdir hello-python; cd hello-python\npython -m venv .venv',mac:'mkdir hello-python && cd hello-python\npython3 -m venv .venv',linux:'mkdir hello-python && cd hello-python\npython3 -m venv .venv'}},
+  {t:'Activate it',why:`Activation puts <code>.venv</code> first on PATH, so <code>python</code> and <code>pip</code> now mean the project's copies. Your prompt shows <code>(.venv)</code>. Run <code>deactivate</code> to leave.`,cmd:{win:R`.venv\Scripts\Activate.ps1`,mac:'source .venv/bin/activate',linux:'source .venv/bin/activate'},note:`PowerShell blocks scripts by default. If you see "running scripts is disabled", run once: <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code>.`},
+  {t:'Install a package (to see pip work)',why:`pip downloads from PyPI into the active environment. <code>requirements.txt</code> records exact versions so others can recreate your setup.`,cmd:{all:'pip install requests\npip freeze > requirements.txt'}}
+ ],
+ run:{win:'python hello.py',mac:'python hello.py',linux:'python hello.py'},
+ editor:`Install <b>VS Code</b> and the <b>Python</b> extension (by Microsoft). Open your folder, then <i>Ctrl/⌘+Shift+P → "Python: Select Interpreter"</i> and choose the <code>.venv</code> one. You get autocomplete, linting and a debugger. PyCharm Community is a great alternative.`,
+ pits:[
+  ['"python is not recognized" / "command not found"',`PATH doesn't include Python. Reopen the terminal first. On Windows re-run the installer → Modify → tick "Add to PATH". On macOS/Linux use <code>python3</code>.`],
+  ['Typing python opens the Microsoft Store',`Windows ships fake "App execution aliases". Settings → Apps → Advanced app settings → App execution aliases → turn off python.exe and python3.exe.`],
+  ['"error: externally-managed-environment"',`Modern Linux and Homebrew forbid pip installing into the system Python. That's the system telling you to use a venv (step 3). Don't use <code>--break-system-packages</code>.`],
+  ['IndentationError / unexpected indent',`You mixed tabs and spaces. Configure your editor to insert 4 spaces per indent (VS Code does by default for .py).`]
+ ],
+ next:[['Testing','Write tests with <code>pytest</code> — the industry standard.'],['Typing','Add type hints and check them with <code>mypy</code> or <code>pyright</code>.'],['Web/API','Build an API with <b>FastAPI</b> or a full site with <b>Django</b>.'],['Data','<b>pandas</b> + <b>matplotlib</b> in a Jupyter notebook, then <b>scikit-learn</b>.'],['Tooling','Try <b>uv</b> — a very fast all-in-one replacement for pip + venv.']]},
+javascript:{name:'JavaScript',mono:'JS',color:'#f5d742',rgb:'245,215,66',lane:'interp',ext:'hello.js',year:1995,by:'Brendan Eich',typing:'Dynamic, weak',kind:'Interpreted + JIT (V8)',ease:4,speed:3,uses:['Web frontend','Backend (Node)','Mobile','Desktop'],
+ tag:'The language of the web. Runs in every browser, and on servers through Node.js.',
+ hello:'console.log("Hello, World!");',
+ what:`Your browser already runs JavaScript. To run it from the terminal you install <b>Node.js</b> — Google's V8 engine wrapped as a program — plus <b>npm</b>, the package manager with the world's largest library registry. Always choose the <b>LTS</b> (long-term support) version.`,
+ steps:[
+  {t:'Install Node.js LTS',why:`Gives you <code>node</code> (runs .js files) and <code>npm</code> (installs packages). On Linux we use <b>nvm</b>, which installs Node in your home folder — no sudo, and you can switch versions per project.`,cmd:{win:'winget install OpenJS.NodeJS.LTS',mac:'brew install node',linux:'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash\n# reopen the terminal, then:\nnvm install --lts'},note:`The nvm version number changes — copy the current install line from the nvm GitHub README if this one is outdated. nvm also works on macOS.`},
+  {t:'Verify it',why:`Two programs, two checks. npm ships with Node.`,cmd:{all:'node --version\nnpm --version'}},
+  {t:'Create a project',why:`<code>npm init -y</code> creates <code>package.json</code> — your project's ID card: name, scripts, and every dependency with its version.`,cmd:{win:'mkdir hello-js; cd hello-js\nnpm init -y',mac:'mkdir hello-js && cd hello-js\nnpm init -y',linux:'mkdir hello-js && cd hello-js\nnpm init -y'}},
+  {t:'Use modern modules',why:`Adding <code>"type": "module"</code> lets you use <code>import</code>/<code>export</code> syntax (ES modules) instead of the older <code>require()</code>.`,cmd:{all:'npm pkg set type=module'}},
+  {t:'Install a package',why:`Packages land in <code>node_modules/</code> (never commit it to git) and get recorded in <code>package.json</code>. <code>package-lock.json</code> pins exact versions.`,cmd:{all:'npm install chalk'}}
+ ],
+ run:{win:'node hello.js',mac:'node hello.js',linux:'node hello.js'},
+ editor:`<b>VS Code</b> has JavaScript support built in. Add <b>ESLint</b> (catches bugs) and <b>Prettier</b> (formats code). For browser code, learn DevTools: <i>F12 → Sources</i> lets you set breakpoints and step through code.`,
+ pits:[
+  ['"Cannot use import statement outside a module"',`Node is treating the file as CommonJS. Add <code>"type": "module"</code> to package.json (step 4) or name the file <code>.mjs</code>.`],
+  ['EACCES permission errors with npm install -g',`Your Node lives in a system folder. Don't use sudo with npm — install Node via nvm so global packages go in your home folder.`],
+  ['"node" works but the version is ancient',`An old system Node is first on PATH. Run <code>which node</code> (macOS/Linux) or <code>where.exe node</code> (Windows) to see which one wins, and remove or reorder.`],
+  ['undefined is not a function / cannot read properties of undefined',`Not a setup problem — a value you expected doesn't exist yet. <code>console.log</code> the object just before the failing line.`]
+ ],
+ next:[['TypeScript','Add static types — most professional JS is now TypeScript.'],['Frontend','Learn the DOM, then a framework: <b>React</b>, <b>Vue</b> or <b>Svelte</b>.'],['Backend','Build an API with <b>Express</b> or <b>Fastify</b>; learn <code>async</code>/<code>await</code> deeply.'],['Testing','<b>Vitest</b> or <b>Jest</b> for unit tests, <b>Playwright</b> for browser tests.'],['Tooling','Understand bundlers by using <b>Vite</b>.']]},
+java:{name:'Java',mono:'Jv',color:'#f89a3c',rgb:'248,154,60',lane:'vm',ext:'Hello.java',year:1995,by:'James Gosling (Sun)',typing:'Static, strong',kind:'Compiled to bytecode (JVM)',ease:3,speed:4,uses:['Enterprise backend','Android','Big data','Fintech'],
+ tag:'Write once, run anywhere. Strict, verbose, extremely reliable — runs banks and Android.',
+ hello:'System.out.println("Hello, World!");',
+ what:`You need the <b>JDK</b> (Java Development Kit): <code>javac</code>, the compiler that turns <code>.java</code> into <code>.class</code> bytecode, plus the <b>JVM</b> that runs bytecode, plus the standard library. A JRE alone can run Java but can't compile it. We use <b>Eclipse Temurin</b>, a free, production-grade build of OpenJDK. Pick an LTS release (21 or 25).`,
+ steps:[
+  {t:'Install a JDK',why:`Installs the compiler, the JVM and the standard library together.`,cmd:{win:'winget install EclipseAdoptium.Temurin.21.JDK',mac:'brew install --cask temurin@21',linux:'sudo apt update && sudo apt install openjdk-21-jdk'}},
+  {t:'Verify both halves',why:`<code>javac</code> proves you have the compiler (JDK), <code>java</code> proves you have the runtime. If only <code>java</code> works, you installed a JRE.`,cmd:{all:'javac -version\njava -version'}},
+  {t:'Set JAVA_HOME',why:`Build tools like Maven, Gradle and IDEs look for the JDK through this variable, not PATH. Set it once and forget it.`,cmd:{win:R`[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Eclipse Adoptium\jdk-21.x.x-hotspot", "User")`,mac:`echo 'export JAVA_HOME=$(/usr/libexec/java_home -v 21)' >> ~/.zshrc`,linux:`echo 'export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which javac))))' >> ~/.bashrc`},note:`Windows: replace the folder with your real one — find it with <code>where.exe java</code>. Then reopen the terminal.`},
+  {t:'Compile, then run',why:`Two separate steps make the VM model visible: <code>javac</code> writes <code>Hello.class</code> (bytecode); <code>java</code> starts the JVM and loads it by <i>class name</i>.`,cmd:{win:'mkdir hello-java; cd hello-java\njavac Hello.java\njava Hello',mac:'mkdir hello-java && cd hello-java\njavac Hello.java\njava Hello',linux:'mkdir hello-java && cd hello-java\njavac Hello.java\njava Hello'}},
+  {t:'Graduate to a build tool',why:`Real projects use <b>Gradle</b> or <b>Maven</b> to compile many files, fetch libraries and run tests. Once you're past Lesson 9, generate a project:`,cmd:{win:'winget install Gradle.Gradle\ngradle init',mac:'brew install gradle\ngradle init',linux:'sdk install gradle   # via sdkman.io\ngradle init'}}
+ ],
+ run:{win:'java Hello.java',mac:'java Hello.java',linux:'java Hello.java'},
+ editor:`<b>IntelliJ IDEA Community</b> is the gold standard for Java and is free. Or VS Code with the <b>Extension Pack for Java</b>. Both detect your JDK automatically once JAVA_HOME is set.`,
+ pits:[
+  ['"class Hello is public, should be declared in a file named Hello.java"',`File name and public class name must match exactly, including capitals.`],
+  ['"javac is not recognized"',`You have a JRE only, or the JDK's <code>bin</code> folder isn't on PATH. Reinstall the JDK and reopen the terminal.`],
+  ['"Could not find or load main class"',`Run <code>java Hello</code> (class name, no <code>.class</code>) from the folder containing Hello.class.`],
+  ['UnsupportedClassVersionError',`Code compiled by a newer JDK is being run on an older JVM. Make <code>java -version</code> and <code>javac -version</code> match.`]
+ ],
+ next:[['Build tools','Learn <b>Gradle</b> or <b>Maven</b> properly — every Java job uses one.'],['Backend','<b>Spring Boot</b> is the dominant Java web framework.'],['Testing','<b>JUnit 5</b> + <b>AssertJ</b> for unit tests.'],['Modern Java','Records, sealed types, pattern matching and virtual threads.'],['Android','<b>Kotlin</b> is Java\'s modern sibling and Android\'s preferred language.']]},
+c:{name:'C',mono:'C',color:'#9fb4d6',rgb:'159,180,214',lane:'native',ext:'hello.c',year:1972,by:'Dennis Ritchie (Bell Labs)',typing:'Static, weak',kind:'Compiled to native code',ease:2,speed:5,uses:['Operating systems','Embedded','Drivers','Firmware'],
+ tag:'The language under everything: kernels, firmware, databases. Small, fast and unforgiving.',
+ hello:'printf("Hello, World!\\n");',
+ what:`You're installing a <b>compiler toolchain</b>: the preprocessor (handles <code>#include</code>), the compiler (C → assembly), the assembler (→ object files) and the <b>linker</b> (joins object files and libraries into one executable). GCC and Clang are the two main toolchains; on Windows we get GCC through <b>MSYS2</b>.`,
+ steps:[
+  {t:'Install the toolchain',why:`Linux: <code>build-essential</code> = gcc + make + the C library headers. macOS: the Command Line Tools give you Clang (<code>gcc</code> is an alias for it). Windows: MSYS2 provides a native GCC.`,cmd:{win:'winget install MSYS2.MSYS2\n# then open "MSYS2 UCRT64" from the Start menu and run:\npacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb',mac:'xcode-select --install',linux:'sudo apt update && sudo apt install build-essential gdb'}},
+  {t:'Put the compiler on PATH (Windows only)',why:`MSYS2 installs GCC into its own folder. Adding it to PATH lets normal terminals and VS Code find <code>gcc</code>.`,cmd:{win:R`[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\msys64\ucrt64\bin", "User")`,mac:'# nothing to do — Xcode tools are already on PATH',linux:'# nothing to do — apt installs into /usr/bin'}},
+  {t:'Verify it',why:`Confirms the compiler runs and shows which one you got.`,cmd:{all:'gcc --version'}},
+  {t:'Compile with warnings on',why:`<code>-Wall -Wextra</code> turn on warnings that catch real bugs. <code>-std=c17</code> picks the language version. <code>-g</code> adds debug info. <code>-o hello</code> names the output (else it's <code>a.out</code>).`,cmd:{all:'gcc -Wall -Wextra -std=c17 -g hello.c -o hello'}},
+  {t:'Catch memory bugs automatically',why:`AddressSanitizer instruments your program so buffer overflows and use-after-free crash immediately with a precise report, instead of corrupting memory silently.`,cmd:{win:'# not supported by MinGW GCC; use WSL or Visual Studio\'s /fsanitize=address',mac:'clang -g -fsanitize=address hello.c -o hello && ./hello',linux:'gcc -g -fsanitize=address,undefined hello.c -o hello && ./hello'}}
+ ],
+ run:{win:'gcc -Wall -g hello.c -o hello.exe; .\\hello.exe',mac:'gcc -Wall -g hello.c -o hello && ./hello',linux:'gcc -Wall -g hello.c -o hello && ./hello'},
+ editor:`VS Code + the <b>C/C++</b> extension (Microsoft) gives IntelliSense and debugging (it uses gdb, or lldb on macOS). <b>CLion</b> is excellent and free for non-commercial use. Learn the debugger early: stepping through pointer code teaches more than any article.`,
+ pits:[
+  ['"undefined reference to sqrt"',`That's the <b>linker</b>, not the compiler: the math library isn't linked by default on Linux. Add <code>-lm</code> at the end of the command.`],
+  ['Segmentation fault (core dumped)',`You touched memory you don't own — a bad pointer or out-of-bounds index. Rebuild with <code>-fsanitize=address</code> and it will tell you the exact line.`],
+  ['"implicit declaration of function"',`You called a function without its header. <code>printf</code> needs <code>#include &lt;stdio.h&gt;</code>, <code>strlen</code> needs <code>&lt;string.h&gt;</code>.`],
+  ['Windows: "gcc is not recognized"',`<code>C:\\msys64\\ucrt64\\bin</code> isn't on PATH (step 2), or you didn't reopen the terminal.`]
+ ],
+ next:[['Pointers & memory','Master pointers, the stack vs the heap, and <code>valgrind</code>.'],['Build systems','Write a <b>Makefile</b>, then learn <b>CMake</b>.'],['Classic book','<i>The C Programming Language</i> (K&R) — short and still the best.'],['Embedded','Program a microcontroller (Arduino, STM32, ESP32).'],['Systems','Write a shell, an allocator, or a tiny HTTP server.']]},
+cpp:{name:'C++',mono:'C++',color:'#6aa6f0',rgb:'106,166,240',lane:'native',ext:'hello.cpp',year:1985,by:'Bjarne Stroustrup',typing:'Static, strong-ish',kind:'Compiled to native code',ease:1,speed:5,uses:['Games','Browsers','Trading','Graphics/engines'],
+ tag:'C with superpowers: classes, templates, a huge standard library. Powers games, browsers and HFT.',
+ hello:'std::cout << "Hello, World!";',
+ what:`Same toolchain idea as C — preprocessor, compiler, linker — but invoked as <b>g++</b> or <b>clang++</b>, which also links the C++ standard library. For anything beyond one file, you'll describe the build with <b>CMake</b>.`,
+ steps:[
+  {t:'Install the toolchain',why:`The same packages as C include the C++ compiler. On Windows, <b>Visual Studio Community</b> with "Desktop development with C++" is the other big option.`,cmd:{win:'winget install MSYS2.MSYS2\n# in the "MSYS2 UCRT64" terminal:\npacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb\n# then add C:\\msys64\\ucrt64\\bin to PATH (see the C guide)',mac:'xcode-select --install',linux:'sudo apt update && sudo apt install build-essential gdb'}},
+  {t:'Verify it',why:`Make sure you're calling the C++ driver. Version 11+ (GCC) or 15+ (Clang) supports C++20 well.`,cmd:{all:'g++ --version'}},
+  {t:'Compile with a modern standard',why:`Without <code>-std=c++20</code> some compilers default to an older standard and reject modern features like structured bindings.`,cmd:{all:'g++ -std=c++20 -Wall -Wextra -g hello.cpp -o hello'}},
+  {t:'Install CMake',why:`CMake generates build files for any compiler or IDE. It's the de-facto standard for real C++ projects.`,cmd:{win:'winget install Kitware.CMake',mac:'brew install cmake',linux:'sudo apt install cmake'}},
+  {t:'A minimal CMake project',why:`Create <code>CMakeLists.txt</code> with the three lines below (the first command writes it), then configure into <code>build/</code> and build. Rebuilds only recompile what changed.`,cmd:{all:'printf \'cmake_minimum_required(VERSION 3.20)\\nproject(hello CXX)\\nset(CMAKE_CXX_STANDARD 20)\\nadd_executable(hello hello.cpp)\\n\' > CMakeLists.txt\ncmake -B build\ncmake --build build'},note:`On Windows PowerShell, create CMakeLists.txt in your editor instead of using <code>printf</code>.`}
+ ],
+ run:{win:'g++ -std=c++20 -Wall hello.cpp -o hello.exe; .\\hello.exe',mac:'g++ -std=c++20 -Wall hello.cpp -o hello && ./hello',linux:'g++ -std=c++20 -Wall hello.cpp -o hello && ./hello'},
+ editor:`VS Code with <b>C/C++</b> and <b>CMake Tools</b>, or <b>CLion</b>, or <b>Visual Studio</b> on Windows (best-in-class debugger). Add <b>clangd</b> for fast, accurate autocomplete.`,
+ pits:[
+  ['"undefined reference to std::cout"',`You compiled with <code>gcc</code> instead of <code>g++</code>, so the C++ standard library wasn't linked.`],
+  ['"structured bindings only available with -std=c++17"',`Add <code>-std=c++20</code> (or set <code>CMAKE_CXX_STANDARD</code>).`],
+  ['A wall of template errors',`Scroll to the <b>first</b> error — everything after it is fallout. It usually names the line in your code that started it.`],
+  ['Linker error: undefined reference to MyClass::method',`You declared it in a header but didn't compile the <code>.cpp</code> that defines it. Add the file to the compile command or to <code>add_executable</code>.`]
+ ],
+ next:[['Modern C++','Smart pointers (<code>unique_ptr</code>), move semantics, RAII.'],['STL','Containers, algorithms and iterators — learn them deeply.'],['Build & deps','CMake properly, plus a package manager: <b>vcpkg</b> or <b>Conan</b>.'],['Games','Try <b>raylib</b> or <b>SFML</b>, then Unreal Engine.'],['Book','<i>A Tour of C++</i> by Stroustrup.']]},
+csharp:{name:'C#',mono:'C#',color:'#b48ef0',rgb:'180,142,240',lane:'vm',ext:'Program.cs',year:2000,by:'Anders Hejlsberg (Microsoft)',typing:'Static, strong',kind:'Compiled to IL (.NET CLR)',ease:3,speed:4,uses:['Enterprise apps','Games (Unity)','Web APIs','Windows desktop'],
+ tag:'Microsoft\'s polished, modern all-rounder. Cross-platform with .NET, and the language of Unity games.',
+ hello:'Console.WriteLine("Hello, World!");',
+ what:`You're installing the <b>.NET SDK</b>: the <code>dotnet</code> command, the Roslyn compiler (C# → IL bytecode), the CLR runtime that JIT-compiles IL to machine code, and project templates. Install the SDK, not just the runtime.`,
+ steps:[
+  {t:'Install the .NET SDK',why:`One command line tool, <code>dotnet</code>, does everything: create, build, run, test and publish. Choose the current LTS release.`,cmd:{win:'winget install Microsoft.DotNet.SDK.10',mac:'brew install --cask dotnet-sdk',linux:'curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel LTS\necho \'export PATH="$HOME/.dotnet:$PATH"\' >> ~/.bashrc'},note:`Ubuntu also packages it: <code>sudo apt install dotnet-sdk-8.0</code> (an older LTS, fine for this course).`},
+  {t:'Verify it',why:`Lists the SDKs the <code>dotnet</code> command can see.`,cmd:{all:'dotnet --list-sdks'}},
+  {t:'Create a console project',why:`The template writes <code>Program.cs</code> and <code>HelloCs.csproj</code> — an XML file declaring the target framework and dependencies. The folder name becomes the project name.`,cmd:{all:'dotnet new console -o HelloCs\ncd HelloCs'}},
+  {t:'Build and run',why:`<code>dotnet run</code> restores packages, compiles to <code>bin/Debug/</code> and runs. Use <code>dotnet watch</code> to rebuild automatically on every save.`,cmd:{all:'dotnet run'}},
+  {t:'Add a package from NuGet',why:`NuGet is .NET's package registry. This adds a reference to your .csproj.`,cmd:{all:'dotnet add package Spectre.Console'}}
+ ],
+ run:{win:'dotnet run',mac:'dotnet run',linux:'dotnet run'},
+ editor:`VS Code + <b>C# Dev Kit</b>, or <b>Visual Studio Community</b> on Windows, or <b>JetBrains Rider</b> (free for non-commercial use). All understand .csproj files directly.`,
+ pits:[
+  ['"Couldn\'t find a project to run"',`<code>dotnet run</code> needs a .csproj in the current folder. <code>cd</code> into the project directory.`],
+  ['"dotnet: command not found" after the install script',`The script installs into <code>~/.dotnet</code>. Make sure that's on PATH (step 1) and reopen the terminal.`],
+  ['Warnings CS8600 / CS8602 (nullable)',`Not errors: C# is warning that a value could be <code>null</code>. Handle it with <code>?</code>, <code>??</code> or a null check — this is helping you.`],
+  ['"Top-level statements must precede namespace and type declarations"',`Put your statements first, then your <code>class</code> definitions at the bottom of the file.`]
+ ],
+ next:[['Web APIs','<b>ASP.NET Core</b> minimal APIs — fast and productive.'],['LINQ & async','Master LINQ and <code>async</code>/<code>await</code>.'],['Games','<b>Unity</b> or <b>Godot</b> with C#.'],['Testing','<b>xUnit</b> or <b>NUnit</b>.'],['Data','<b>Entity Framework Core</b> for databases.']]},
+go:{name:'Go',mono:'Go',color:'#3fc8e8',rgb:'63,200,232',lane:'native',ext:'main.go',year:2009,by:'Griesemer, Pike & Thompson (Google)',typing:'Static, strong',kind:'Compiled to native code',ease:4,speed:4,uses:['Cloud & DevOps','Microservices','CLIs','Networking'],
+ tag:'Deliberately simple, compiles in a blink, built for servers. Docker and Kubernetes are written in Go.',
+ hello:'fmt.Println("Hello, World!")',
+ what:`The Go distribution is one self-contained toolchain: the <code>go</code> command compiles, runs, tests, formats, vets and fetches dependencies. It produces a single static binary — no runtime to install where you deploy.`,
+ steps:[
+  {t:'Install Go',why:`Installs the compiler and the <code>go</code> tool.`,cmd:{win:'winget install GoLang.Go',mac:'brew install go',linux:'sudo snap install go --classic'},note:`No snap? Download the tarball from go.dev/dl, extract with <code>sudo tar -C /usr/local -xzf go*.tar.gz</code>, and add <code>/usr/local/go/bin</code> to PATH.`},
+  {t:'Verify it',why:`Shows the installed version.`,cmd:{all:'go version'}},
+  {t:'Create a module',why:`Every Go project is a <b>module</b>. <code>go.mod</code> records the module path and Go version; it's required before <code>go run .</code> works.`,cmd:{win:'mkdir hello-go; cd hello-go\ngo mod init example.com/hello',mac:'mkdir hello-go && cd hello-go\ngo mod init example.com/hello',linux:'mkdir hello-go && cd hello-go\ngo mod init example.com/hello'}},
+  {t:'Run and build',why:`<code>go run .</code> compiles to a temp file and runs it. <code>go build</code> writes a real executable you can copy anywhere.`,cmd:{all:'go run .\ngo build'}},
+  {t:'Format and check',why:`<code>go fmt</code> rewrites your code in the one official style — no debates. <code>go vet</code> catches suspicious code the compiler allows.`,cmd:{all:'go fmt ./...\ngo vet ./...'}}
+ ],
+ run:{win:'go run .',mac:'go run .',linux:'go run .'},
+ editor:`VS Code + the official <b>Go</b> extension (it installs <code>gopls</code>, the language server, and formats on save). <b>GoLand</b> is the paid IDE alternative.`,
+ pits:[
+  ['"declared and not used" / "imported and not used"',`Go treats unused variables and imports as compile errors, on purpose. Delete them, or use <code>_</code> to discard a value.`],
+  ['"go: cannot find main module"',`Run <code>go mod init &lt;name&gt;</code> in your project folder first (step 3).`],
+  ['"undefined: someFunction" from another package',`Only <b>Capitalised</b> names are exported. Rename <code>someFunction</code> to <code>SomeFunction</code>.`],
+  ['Code using tabs looks "wrong" in your editor',`Go's official format uses tabs. Let <code>go fmt</code> handle it and stop worrying.`]
+ ],
+ next:[['Concurrency','Goroutines and channels — Go\'s signature feature.'],['Web','The standard <code>net/http</code> package is enough for real APIs.'],['Testing','<code>go test</code>, table-driven tests and benchmarks are built in.'],['Cloud','Read the source of a Go CLI tool you use; build your own with <b>cobra</b>.'],['Book','<i>The Go Programming Language</i> (Donovan & Kernighan).']]},
+rust:{name:'Rust',mono:'Rs',color:'#e8a77a',rgb:'232,167,122',lane:'native',ext:'main.rs',year:2015,by:'Graydon Hoare / Mozilla',typing:'Static, strong',kind:'Compiled to native code',ease:1,speed:5,uses:['Systems','WebAssembly','CLIs','Infrastructure'],
+ tag:'C-level speed with memory safety proven at compile time. Hard at first, deeply rewarding.',
+ hello:'println!("Hello, World!");',
+ what:`You install <b>rustup</b>, the toolchain manager, which then installs <b>rustc</b> (the compiler), <b>cargo</b> (build tool + package manager), <b>clippy</b> (linter) and <b>rustfmt</b> (formatter). Rust uses your system's linker, which is why Windows needs Microsoft's C++ build tools.`,
+ steps:[
+  {t:'Install rustup',why:`rustup lives in your home folder and keeps Rust updated with <code>rustup update</code>. Accept the default options when asked.`,cmd:{win:'winget install Rustlang.Rustup',mac:"curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",linux:"curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"}},
+  {t:'Install a linker',why:`rustc produces object files; a linker joins them into an executable. Windows: install the Visual Studio Build Tools and tick <b>"Desktop development with C++"</b>. macOS: the Xcode tools. Linux: gcc.`,cmd:{win:'winget install Microsoft.VisualStudio.2022.BuildTools\n# in the installer, select "Desktop development with C++"',mac:'xcode-select --install',linux:'sudo apt install build-essential'}},
+  {t:'Verify it',why:`Reopen the terminal first (or run <code>source "$HOME/.cargo/env"</code> on macOS/Linux) so <code>~/.cargo/bin</code> is on PATH.`,cmd:{all:'rustc --version\ncargo --version'}},
+  {t:'Create a project',why:`<code>cargo new</code> creates <code>Cargo.toml</code> (name, version, dependencies), <code>src/main.rs</code> with Hello World, and a git repository.`,cmd:{all:'cargo new hello-rust\ncd hello-rust'}},
+  {t:'Run, lint, format',why:`<code>cargo run</code> builds a debug binary in <code>target/debug</code> and runs it. Add <code>--release</code> for full optimisation. <b>clippy</b> suggests idiomatic fixes; <b>fmt</b> formats.`,cmd:{all:'cargo run\ncargo clippy\ncargo fmt'}}
+ ],
+ run:{win:'cargo run',mac:'cargo run',linux:'cargo run'},
+ editor:`VS Code + <b>rust-analyzer</b> — essential, it shows inferred types inline and explains borrow errors as you type. <b>RustRover</b> (JetBrains) is the IDE alternative.`,
+ pits:[
+  ['Windows: "linker link.exe not found"',`The MSVC build tools are missing (step 2). Install them, then reopen the terminal.`],
+  ['"borrow of moved value"',`Ownership: assigning or passing a <code>String</code> moves it. Pass a reference (<code>&amp;s</code>) instead, or <code>.clone()</code> if you really need two copies.`],
+  ['"cannot borrow as mutable"',`The variable wasn't declared <code>let mut</code>, or something else is borrowing it at the same time.`],
+  ['The first build is slow',`Cargo compiles all dependencies once and caches them in <code>target/</code>. Later builds are incremental and much faster.`]
+ ],
+ next:[['The Book','Read <i>The Rust Programming Language</i> (free online) cover to cover.'],['Ownership','Practise borrowing and lifetimes with <b>Rustlings</b> exercises.'],['Async','<b>Tokio</b> for async networking; <b>Axum</b> for web APIs.'],['CLIs','<b>clap</b> + <b>serde</b> — build a real command-line tool.'],['WebAssembly','Compile Rust to run in the browser with <b>wasm-pack</b>.']]}
+};
+
+/* ===================== LESSON DATA ===================== */
+const LESSONS=[
+{id:'hello',title:'Hello, World & program anatomy',sub:'Where a program starts, and how output works',
+ intro:`Every program has an <b>entry point</b> — the place the runtime begins executing. In Python and JavaScript it's simply the top of the file. In Java, C, C++, C#, Go and Rust, it's a function named <code>main</code> that the runtime calls for you. Output goes to <b>standard output (stdout)</b>, a stream your terminal displays.`,
+ keys:[['Entry point','Script languages start at line 1; compiled ones call main().'],['stdout','A stream of text. The terminal shows it; you can also redirect it to a file with >.'],['Comments','Notes for humans the compiler ignores: # in Python, // elsewhere.']],
+ diagram:'hello',
+ quiz:{q:'What is a program\'s entry point?',o:['The first import statement','The function or line the runtime executes first','The last function defined in the file','Whichever function is called main, in every language'],a:1,why:'The runtime starts somewhere specific: the top of the file for Python/JS, or the main function for Java, C, C++, C#, Go and Rust. The last option is wrong because Python and JavaScript don\'t need a main.'},
+ ex:{task:'Print your name and your city on two separate lines. Then print both on ONE line using a single print call with string formatting.',hints:['Most print functions add a newline automatically — C\'s printf and Rust\'s print! don\'t.','Use your language\'s interpolation: f-strings, template literals, $"", format!, or printf with %s.'],expect:'Ada\nLondon\nAda lives in London'}},
+{id:'vars',title:'Variables & types',sub:'Naming values and what kind of data they hold',
+ intro:`A <b>variable</b> is a name bound to a value stored in memory. Every value has a <b>type</b> — integer, decimal, text, true/false — which decides what operations make sense. <b>Statically typed</b> languages (Java, C, Go, Rust…) fix a variable's type at compile time and catch mismatches before running. <b>Dynamically typed</b> ones (Python, JS) check at run time.`,
+ keys:[['Declaration','Introducing a name. Some languages need a keyword: let, const, var, :='],['Type','int, float/double, string, bool are universal. Sizes (32/64-bit) matter in C-family languages.'],['Mutability','Can the value change? Rust and modern JS make you choose explicitly.']],
+ diagram:'vars',
+ quiz:{q:'After x = 5 and then x = x + 1, what is x?',o:['An error — x was already defined','6','5 — variables can\'t change','A second variable x is created alongside the first'],a:1,why:'The right side is evaluated first (5 + 1 = 6), then the result is stored in x. That\'s why = means "assign", not "equals". (In Rust, x needs to be declared mut for this to compile.)'},
+ ex:{task:'Store your birth year in a variable. Compute your age at the end of 2030 and print "<name> will be <age> in 2030". Then try assigning text to the number variable and read the error your language gives (or doesn\'t!).',hints:['age = 2030 - birth_year','In statically typed languages the reassignment is a compile error — that\'s the type checker protecting you.'],expect:'Ada will be 30 in 2030'}},
+{id:'ops',title:'Operators & strings',sub:'Arithmetic, comparisons and working with text',
+ intro:`Operators combine values: arithmetic (<code>+ - * / %</code>), comparison (<code>== != &lt; &gt;</code>) and logical (and/or/not). The big trap is <b>integer division</b>: in most typed languages <code>17 / 5</code> is <code>3</code>, not <code>3.4</code>. <b>Strings</b> are sequences of characters, indexed from 0, and have methods for searching, slicing and changing case.`,
+ keys:[['% (modulo)','The remainder after division. 17 % 5 = 2. Great for "is it even?" and wrap-around.'],['Indexing','The first character is at index 0, the last at length − 1.'],['Immutability','In most languages, string methods return a NEW string rather than changing the original.']],
+ diagram:'ops',
+ quiz:{q:'In Java, C, C++, C#, Go and Rust, what does 17 / 5 give when both are integers?',o:['3.4','3','4','A compile error'],a:1,why:'Integer ÷ integer truncates toward zero, so 17 / 5 = 3. Convert one side to a floating-point type first to get 3.4. Python 3 and JavaScript are the exceptions: their / always returns a decimal.'},
+ ex:{task:'Given a word in a variable, print its length, its first letter, its last letter, and the word reversed. Then check whether it\'s a palindrome (reads the same backwards).',hints:['Last letter = index length − 1.','Python: s[::-1]. JS: [...s].reverse().join(""). Others: loop from the end and build a new string.'],expect:'level → 5 l l level → palindrome: true'}},
+{id:'if',title:'Making decisions',sub:'if / else, boolean logic and switch/match',
+ intro:`Programs branch with <b>conditions</b>: expressions that evaluate to true or false. An <code>if / else if / else</code> chain tests each condition in order and runs <b>only the first</b> branch that's true. Combine conditions with AND / OR / NOT. When you're comparing one value against many options, <b>switch</b> or <b>match</b> is cleaner than a long chain.`,
+ keys:[['Order matters','Put the most specific condition first — once one matches, the rest are skipped.'],['Short-circuit','In a && b, if a is false, b is never evaluated. Useful for guards: if (x != null && x.ok).'],['Exhaustiveness','Rust\'s match and Java/C# switch expressions make you handle every case.']],
+ diagram:'if',
+ quiz:{q:'In an if / else-if / else chain, how many branches run?',o:['Every branch whose condition is true','Exactly one — the first whose condition is true, or else the else','Always the last one','At least two'],a:1,why:'The chain stops at the first true condition. If none are true, the else runs (if present). That\'s why order matters: put temp > 30 before temp > 15.'},
+ ex:{task:'Single-number FizzBuzz: given n, print "Fizz" if it\'s divisible by 3, "Buzz" if by 5, "FizzBuzz" if by both, otherwise the number itself.',hints:['"Divisible by 3" means n % 3 == 0.','Check the "both" case FIRST — otherwise 15 stops at Fizz.'],expect:'9 → Fizz · 10 → Buzz · 15 → FizzBuzz · 7 → 7'}},
+{id:'loops',title:'Loops',sub:'Repeating work with for and while',
+ intro:`A <b>loop</b> repeats a block of code. Use a <b>for</b> loop when you know how many times, or are walking through a collection. Use a <b>while</b> loop when you repeat until something changes. Every loop needs a way to end — forget to update the condition and you get an <b>infinite loop</b> (press <span class="kbd">Ctrl C</span> to escape). <code>break</code> exits early; <code>continue</code> skips to the next round.`,
+ keys:[['Counting loop','init → check → body → step → check again…'],['For-each','Visits every item of a collection; no index bookkeeping, fewer bugs.'],['Off-by-one','The most common loop bug: < vs <=, and remembering indexes start at 0.']],
+ diagram:'loops',
+ quiz:{q:'How many times does range(5) in Python — or for (i = 0; i < 5; i++) — run its body?',o:['4','5','6','It depends on the language'],a:1,why:'It visits 0, 1, 2, 3, 4: five values. The end value is excluded, which is exactly what you want for indexing a 5-element array.'},
+ ex:{task:'1) Full FizzBuzz from 1 to 100. 2) Compute the sum of all even numbers from 1 to 100. 3) Print a right-angled triangle of * with 5 rows using nested loops.',hints:['Reuse your Lesson 4 logic inside a loop.','For the sum, start total at 0 and add when n % 2 == 0. The answer is 2550.','The inner loop runs "row number" times.'],expect:'Sum of evens = 2550\n*\n**\n***\n****\n*****'}},
+{id:'func',title:'Functions',sub:'Parameters, return values, scope and recursion',
+ intro:`A <b>function</b> packages a piece of logic under a name so you can reuse it, test it, and think about it in isolation. It takes <b>parameters</b> (inputs) and <b>returns</b> a result. Each call gets its own <b>stack frame</b> holding its local variables — which is exactly what makes <b>recursion</b> (a function calling itself) possible.`,
+ keys:[['Signature','Name + parameters + return type. In typed languages, the compiler checks every call against it.'],['Scope','Variables created inside a function vanish when it returns.'],['Pure functions','Same input → same output, no side effects. The easiest code to test and trust.']],
+ diagram:'func',
+ quiz:{q:'What stops a recursive function from calling itself forever?',o:['The compiler automatically limits it','A base case that returns without recursing','A while loop around the call','Nothing — recursion always runs until it crashes'],a:1,why:'The base case (n <= 1 in factorial) returns a value directly. Without one, calls pile up until the stack runs out — a "stack overflow".'},
+ ex:{task:'Write is_prime(n) that returns true/false. Use it to print every prime below 50. Then write a recursive fib(n) and print the first 10 Fibonacci numbers.',hints:['n < 2 is not prime. Test divisors from 2 up to √n — if none divide evenly, it\'s prime.','fib(0) = 0, fib(1) = 1, fib(n) = fib(n−1) + fib(n−2).'],expect:'2 3 5 7 11 13 17 19 23 29 31 37 41 43 47\n0 1 1 2 3 5 8 13 21 34'}},
+{id:'coll',title:'Collections',sub:'Lists/arrays, maps/dictionaries and sets',
+ intro:`Real programs handle many values at once. A <b>list</b> (array, vector, slice) keeps items in order and finds them by <b>position</b>. A <b>map</b> (dictionary, hash map) stores <b>key → value</b> pairs and finds values by key almost instantly, no matter how big it gets. A <b>set</b> stores unique items. Choosing the right one is half of writing fast code.`,
+ keys:[['List','Ordered; access by index in O(1); searching for a value is O(n).'],['Map','Lookup by key in O(1) on average, via a hash function.'],['Set','Unique items; perfect for "have I seen this before?" checks.']],
+ diagram:'coll',
+ quiz:{q:'You need to look up a phone number by a person\'s name, thousands of times. Best structure?',o:['A list of names and a separate list of numbers','A map / dictionary from name to number','A set of numbers','A string with everything joined together'],a:1,why:'A hash map finds the value for a key in roughly constant time. With lists you\'d scan every element for each lookup.'},
+ ex:{task:'Count how often each word appears in a sentence using a map, then print the most common word and its count. Ignore case.',hints:['Lowercase the sentence, then split on spaces.','counts[word] = counts.get(word, 0) + 1 (or your language\'s equivalent).','Loop over the map keeping track of the best word so far.'],expect:'"the cat and the hat" → the: 2'}},
+{id:'obj',title:'Objects & custom types',sub:'Classes, structs, methods, encapsulation',
+ intro:`A <b>custom type</b> bundles related data with the operations on it. A <b>class</b> (or struct) is the blueprint; an <b>object</b> is one thing built from it. <b>Methods</b> are functions that belong to the type. <b>Encapsulation</b> hides internals so nobody can, say, set a balance to −1,000,000 directly. Languages disagree on <b>inheritance</b>: Java, C#, C++, Python and JS use it; Go and Rust prefer composition and interfaces/traits.`,
+ keys:[['Constructor','Runs when an object is created; sets up valid initial state.'],['Encapsulation','private fields + public methods = rules that can\'t be bypassed.'],['Composition > inheritance','"Has-a" is usually more flexible than "is-a". Go and Rust enforce it.']],
+ diagram:'obj',
+ quiz:{q:'A class is to an object as…',o:['A house is to a street','A blueprint is to a house built from it','A variable is to a function','A file is to a folder'],a:1,why:'The class describes the structure; each object (instance) is a concrete thing built from that description, with its own field values.'},
+ ex:{task:'Create a Rectangle type with width and height, plus methods area() and is_square(). Make three rectangles, store them in a list, and print the area of each and whether it\'s a square.',hints:['Validate in the constructor: width and height must be positive.','is_square() is just width == height.'],expect:'3x4 area 12 square: false\n5x5 area 25 square: true\n2x8 area 16 square: false'}},
+{id:'err',title:'Handling errors',sub:'Exceptions, error values and Result types',
+ intro:`Things go wrong: files go missing, users type "ten" instead of 10. Languages offer two models. <b>Exceptions</b> (Python, JS, Java, C#, C++) jump out of the normal flow to the nearest matching <code>catch</code>. <b>Errors as values</b> (C, Go, Rust) return the failure like any other result, so you handle it right where it happens. Either way: never let bad input crash your program.`,
+ keys:[['try / catch','Wrap risky code; handle specific error types, most specific first.'],['finally','Runs whether or not an error happened — for cleanup like closing files.'],['Result / error values','Failure is part of the return type, so it can\'t be silently ignored.']],
+ diagram:'err',
+ quiz:{q:'When does a finally block run?',o:['Only if an exception was thrown','Only if no exception was thrown','Always — whether the try succeeded, failed, or returned early','Never, unless you call it manually'],a:2,why:'finally is guaranteed to run on every path out of the try — success, caught error, uncaught error, or return — which makes it the right place for cleanup.'},
+ ex:{task:'Ask the user for their age (as text). If it isn\'t a number, print "Please enter digits only". If it\'s negative or over 150, print "That doesn\'t look like a real age". Otherwise print "In 10 years you\'ll be N". The program must never crash.',hints:['Parse inside try/catch (or check the Result / error value).','Validation happens AFTER a successful parse — two different kinds of failure.'],expect:'ten → Please enter digits only\n-4 → That doesn\'t look like a real age\n30 → In 10 years you\'ll be 40'}}
+];
+
+/* ===================== DIAGRAMS ===================== */
+const box=(x,y,w,h,cls,t,s,d,mono)=>`<g class="nd" style="--d:${d}s"><rect class="bx ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/><text class="${mono?'tm':'t'}" x="${x+w/2}" y="${y+(s?h/2-2:h/2+5)}" text-anchor="middle">${t}</text>${s?`<text class="ts" x="${x+w/2}" y="${y+h/2+16}" text-anchor="middle">${s}</text>`:''}</g>`;
+const ln=(d,dl,a)=>`<path class="ln ${a?'a':''} dw" pathLength="1" style="--d:${dl}s" d="${d}" marker-end="url(#${a?'arra':'arr'})"/>`;
+const tx=(x,y,t,cls,d,anchor)=>`<text class="${cls} nd" style="--d:${d}s" x="${x}" y="${y}" ${anchor?`text-anchor="${anchor}"`:''}>${t}</text>`;
+const dia=(k)=>{
+ switch(k){
+ case 'hello': return [`<svg viewBox="0 0 540 220">`,
+  box(20,20,210,70,'a','Source file','text you write',.1),ln('M230 55 H306',.4),
+  box(310,20,210,70,'','Toolchain','compile / interpret',.6),ln('M415 90 V126',.9),
+  box(310,130,210,70,'','main() runs','the entry point',1.1),ln('M310 165 H234',1.4,1),
+  box(20,130,210,70,'g','stdout → terminal','"Hello, World!"',1.6),'</svg>','Every "Hello, World!" travels this path — the toolchain step is what you set up in Phase 1.'];
+ case 'vars': {let s=`<svg viewBox="0 0 540 250">`;const rows=[['name','"Ada"','string'],['age','36 → 37','int'],['height','1.65','float'],['is_admin','false','bool']];
+  rows.forEach((r,i)=>{const y=18+i*56,d=.15+i*.25;s+=tx(24,y+30,r[0],'tm',d)+ln(`M120 ${y+25} H186`,d+.15)+box(190,y,190,44,i==1?'a':'','','',d+.25).replace('></text>',`>${r[1]}</text>`).replace('class="t"','class="tm"')+`<g class="nd" style="--d:${d+.4}s"><rect x="402" y="${y+9}" width="100" height="26" rx="13" style="fill:rgba(var(--accent-rgb),.12);stroke:var(--accent);stroke-opacity:.5"/><text class="tl" x="452" y="${y+27}" text-anchor="middle">${r[2]}</text></g>`});
+  return [s+'</svg>','Names (left) point at values in memory (boxes). Every value has a type (tags). Reassigning age swaps the value in its box.'];}
+ case 'ops': {let s=`<svg viewBox="0 0 540 200">`;const ch='Hello';for(let i=0;i<5;i++){const x=95+i*72,d=.1+i*.12,on=i>=1&&i<=3;s+=`<g class="nd" style="--d:${d}s"><rect class="bx ${on?'a':''}" x="${x}" y="60" width="64" height="64" rx="10"/><text class="t" x="${x+32}" y="100" text-anchor="middle" style="font-size:24px">${ch[i]}</text><text class="tl" x="${x+32}" y="46" text-anchor="middle">${i}</text><text class="ts" x="${x+32}" y="146" text-anchor="middle">${i-5}</text></g>`}
+  s+=tx(20,46,'index','ts',.1)+tx(20,146,'from end','ts',.1)+`<path class="ln a dw" pathLength="1" style="--d:.9s" d="M167 166 V178 H377 V166"/>`+tx(272,196,'s[1:4] → "ell"  (start included, end excluded)','tl',1.1,'middle');
+  return [s+'</svg>','String indexing: positions count from 0. Python also allows negative indexes from the end; slices include the start and exclude the end.'];}
+ case 'if': return [`<svg viewBox="0 0 540 330">`,
+  `<g class="nd" style="--d:.1s"><rect class="bx a" x="110" y="8" width="140" height="38" rx="19"/><text class="t" x="180" y="32" text-anchor="middle">temp = 31</text></g>`,ln('M180 46 V66',.3),
+  `<g class="nd" style="--d:.4s"><polygon class="bx" points="180,70 280,108 180,146 80,108"/><text class="tm" x="180" y="113" text-anchor="middle">temp &gt; 30?</text></g>`,
+  ln('M280 108 H356',.7,1),tx(300,100,'yes','tl',.8),box(360,88,140,40,'g','"Hot"','',.9,1),
+  ln('M180 146 V170',.7),tx(190,163,'no','ts',.8),
+  `<g class="nd" style="--d:1s"><polygon class="bx" points="180,174 280,212 180,250 80,212"/><text class="tm" x="180" y="217" text-anchor="middle">temp &gt; 15?</text></g>`,
+  ln('M280 212 H356',1.2),tx(300,204,'yes','ts',1.3),box(360,192,140,40,'','"Pleasant"','',1.3,1),
+  ln('M180 250 V276',1.2),tx(190,268,'no','ts',1.3),box(110,280,140,40,'','"Cold"','',1.4,1),
+  tx(360,290,'Only ONE branch runs.','ts',1.6),tx(360,310,'Here: the first one.','tl',1.7),'</svg>','The flowchart of the if / elif / else from the code below. With temp = 31 the highlighted path is taken and the other tests never run.'];
+ case 'loops': return [`<svg viewBox="0 0 540 310">`,
+  box(110,10,140,40,'a','i = 1','',.1,1),ln('M180 50 V72',.3),
+  `<g class="nd" style="--d:.4s"><polygon class="bx" points="180,76 270,112 180,148 90,112"/><text class="tm" x="180" y="117" text-anchor="middle">i &lt;= 5?</text></g>`,
+  ln('M180 148 V176',.6,1),tx(190,168,'yes','tl',.7),box(110,180,140,40,'','body: print i','',.8),
+  ln('M180 220 V244',1),box(110,248,140,40,'','i = i + 1','',1.1,1),
+  ln('M110 268 H50 V112 H86',1.3,1),tx(30,190,'repeat','tl',1.5),
+  ln('M270 112 H356',1.4),tx(290,104,'no','ts',1.5),box(360,92,150,40,'g','exit loop','',1.6),
+  tx(360,170,'Output: 1 2 3 4 5','tm',1.8),tx(360,195,'The check happens','ts',1.9),tx(360,213,'BEFORE every pass.','ts',1.95),'</svg>','A counting for-loop unrolled into its four parts: initialise, test, run the body, step — then test again.'];
+ case 'func': {let s=`<svg viewBox="0 0 540 270">`;const fr=[['main()','waits for result',''],['factorial(3)','3 × factorial(2)',''],['factorial(2)','2 × factorial(1)',''],['factorial(1)','base case → 1','a']];
+  fr.forEach((f,i)=>{const y=206-i*58;s+=box(40,y,250,48,f[2],f[0],f[1],.15+i*.3)});
+  s+=tx(165,18,'call stack (grows upward)','tl',.1,'middle');
+  const rv=[['returns 1',.5],['2 × 1 = 2',.9],['3 × 2 = 6',1.3]];
+  rv.forEach((r,i)=>{const y=40+i*58;s+=ln(`M296 ${y+8} C340 ${y+8} 340 ${y+66} 296 ${y+66}`,1.4+i*.35,1)+tx(350,y+42,r[0],'tm',1.5+i*.35)});
+  s+=tx(350,250,'main gets 6','tl',2.6);
+  return [s+'</svg>','Each call pushes a new stack frame with its own n. When the base case returns, frames pop one by one, multiplying on the way down.'];}
+ case 'coll': {let s=`<svg viewBox="0 0 540 300">`;s+=tx(20,24,'LIST — find by position','tl',.1);
+  [1,3,5,8].forEach((v,i)=>{const x=20+i*70;s+=`<g class="nd" style="--d:${.2+i*.1}s"><rect class="bx" x="${x}" y="36" width="62" height="50" rx="9"/><text class="tm" x="${x+31}" y="67" text-anchor="middle">${v}</text><text class="ts" x="${x+31}" y="104" text-anchor="middle">[${i}]</text></g>`});
+  s+=tx(320,58,'nums[2] → 5','tm',.7)+tx(320,80,'jump straight to slot 2','ts',.8);
+  s+=tx(20,150,'MAP — find by key (hashing)','tl',.9);
+  const ks=[['"ada"',0,'36'],['"linus"',2,'54'],['"grace"',3,'85']];
+  [0,1,2,3].forEach(b=>{const y=164+b*32;const hit=ks.find(k=>k[1]==b);s+=`<g class="nd" style="--d:${1+b*.08}s"><rect class="bx ${hit?'':''}" x="330" y="${y}" width="190" height="26" rx="7"/><text class="ts" x="342" y="${y+18}">bucket ${b}</text><text class="tm" x="508" y="${y+18}" text-anchor="end">${hit?hit[0]+': '+hit[2]:'—'}</text></g>`});
+  ks.forEach((k,i)=>{const y=168+i*40;s+=box(20,y,110,30,'',k[0],'',1.2+i*.15,1)+ln(`M130 ${y+15} H186`,1.3+i*.15)+`<g class="nd" style="--d:${1.35+i*.15}s"><rect x="190" y="${y+3}" width="70" height="24" rx="12" style="fill:rgba(var(--accent-rgb),.12);stroke:var(--accent);stroke-opacity:.5"/><text class="tl" x="225" y="${y+20}" text-anchor="middle">hash()</text></g>`+ln(`M260 ${y+15} L326 ${177+k[1]*32}`,1.45+i*.15,1)});
+  return [s+'</svg>','A list finds items by numeric position. A map runs each key through a hash function that picks a bucket — so lookups stay fast even with millions of entries.'];}
+ case 'obj': return [`<svg viewBox="0 0 540 290">`,
+  `<g class="nd" style="--d:.1s"><rect class="bx a" x="20" y="14" width="220" height="130" rx="10"/><text class="t" x="130" y="40" text-anchor="middle">Account</text><line x1="20" y1="52" x2="240" y2="52" style="stroke:var(--accent);stroke-opacity:.5"/><text class="tm" x="34" y="76">- owner</text><text class="tm" x="34" y="96">- balance</text><line x1="20" y1="106" x2="240" y2="106" style="stroke:var(--accent);stroke-opacity:.5"/><text class="tm" x="34" y="130">+ deposit(amount)</text></g>`,
+  `<g class="nd" style="--d:.5s"><rect class="bx" x="20" y="196" width="220" height="80" rx="10"/><text class="t" x="130" y="222" text-anchor="middle">Savings</text><line x1="20" y1="234" x2="240" y2="234" style="stroke:var(--line2)"/><text class="tm" x="34" y="258">+ add_interest(rate)</text></g>`,
+  `<path class="ln dw" pathLength="1" style="--d:.7s" d="M130 196 V150" marker-end="url(#tri)"/>`,tx(140,178,'inherits','ts',.9),
+  `<g class="nd" style="--d:1.1s"><rect class="bx g" x="320" y="150" width="200" height="110" rx="10"/><text class="t" x="420" y="176" text-anchor="middle">acct : Savings</text><line x1="320" y1="188" x2="520" y2="188" style="stroke:var(--ok);stroke-opacity:.5"/><text class="tm" x="334" y="212">owner = "Ada"</text><text class="tm" x="334" y="236">balance = 1650</text></g>`,
+  `<path class="ln dw" pathLength="1" style="--d:1.3s" stroke-dasharray="5 5" d="M320 236 H246" marker-end="url(#arr)"/>`,tx(250,226,'instance of','ts',1.4),
+  tx(320,40,'Class = blueprint','tl',1.5),tx(320,62,'Object = a real thing','tl',1.6),tx(320,84,'built from it, with','ts',1.7),tx(320,102,'its own field values.','ts',1.75),
+  tx(320,124,'- private   + public','tm',1.8),'</svg>','A UML-style class diagram: Savings inherits everything from Account and adds a method. acct is one concrete object.'];
+ case 'err': return [`<svg viewBox="0 0 540 300">`,
+  box(190,10,160,42,'a','try { risky code }','',.1,1),ln('M270 52 V74',.3),
+  `<g class="nd" style="--d:.4s"><polygon class="bx" points="270,78 360,114 270,150 180,114"/><text class="t" x="270" y="119" text-anchor="middle">error?</text></g>`,
+  ln('M180 114 H110 V176',.7),tx(130,106,'no','ts',.8),box(30,180,160,42,'g','continue normally','',.9),
+  ln('M360 114 H430 V176',.7,1),tx(380,106,'yes','tl',.8),box(350,180,160,42,'r','matching catch?','',.9),
+  ln('M110 222 V250 H186',1.2),ln('M430 222 V250 H354',1.2),box(190,232,160,42,'a','finally (always)','',1.4,1),
+  tx(520,150,'no match →','ts',1.6,'end'),tx(520,166,'bubbles up to caller','ts',1.65,'end'),'</svg>','Exception flow. Errors-as-values languages (C, Go, Rust) replace the diamond with an explicit if / match on the returned value.'];
+ }};
+
+/* ===================== HIGHLIGHTER ===================== */
+const KW={
+python:'and as assert async await break class continue def del elif else except False finally for from global if import in is lambda None nonlocal not or pass raise return True try while with yield match case self print len range',
+javascript:'async await break case catch class const continue default delete do else export extends false finally for from function if import in instanceof let new null of return static super switch this throw true try typeof undefined var void while yield get',
+java:'abstract boolean break byte case catch char class continue default do double else enum extends final finally float for if implements import instanceof int interface long new null package private protected public return short static super switch this throw throws true false try var void while record',
+c:'auto break case char const continue default do double else enum extern float for if int long return short signed sizeof static struct switch typedef union unsigned void while bool true false NULL',
+cpp:'auto break case char const continue default do double else enum extern float for if int long return short signed sizeof static struct switch typedef union unsigned void while bool true false class namespace new delete private protected public template this throw try catch using virtual override static_cast nullptr std constexpr explicit operator noexcept',
+csharp:'abstract as base bool break case catch class const continue decimal default do double else enum false finally for foreach if in int interface is long new null out override private protected public readonly record return static string struct switch this throw true try using var void while get set init async await',
+go:'break case chan const continue default defer else fallthrough for func go goto if import interface map package range return select struct switch type var true false nil int string float64 bool error',
+rust:'as break const continue crate else enum false fn for if impl in let loop match mod move mut pub ref return self Self static struct super trait true type unsafe use where while Some None Ok Err i32 u64 f64 str'};
+const KWS={};ORDER.forEach(l=>KWS[l]=new Set(KW[l].split(' ')));
+const RX={};
+ORDER.forEach(l=>{
+ const com=l==='python'?String.raw`#.*`:String.raw`\/\/.*|\/\*[\s\S]*?\*\/`;
+ const str=String.raw`"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'`+(l==='javascript'?String.raw`|\`(?:\\.|[^\`\\])*\``:'');
+ const pp=(l==='c'||l==='cpp')?String.raw`|(?<pp>#\s*\w+(?:\s*<[^>\n]*>)?)`:l==='rust'?String.raw`|(?<pp>#\[[^\]\n]*\])`:'';
+ RX[l]=new RegExp(`(?<com>${com})|(?<str>${str})${pp}|(?<num>\\b\\d[\\d_]*(?:\\.\\d+)?[a-z]?\\b)|(?<w>[A-Za-z_]\\w*)`,'g');
+});
+function hl(code,lang){
+ const re=RX[lang];re.lastIndex=0;let out='',last=0,m;
+ while((m=re.exec(code))){
+  out+=esc(code.slice(last,m.index));const t=m[0],g=m.groups;let c='';
+  if(g.com)c='c';else if(g.str)c='s';else if(g.pp)c='pp';else if(g.num)c='n';
+  else{const nx=code[re.lastIndex];if(KWS[lang].has(t))c='k';else if(nx==='('||(lang==='rust'&&nx==='!'))c='f';else if(/^[A-Z]/.test(t))c='ty';}
+  out+=c?`<span class="${c}">${esc(t)}</span>`:esc(t);last=re.lastIndex;
+ }
+ return out+esc(code.slice(last));
+}
+const getCode=(id)=>{const el=document.getElementById(id);if(!el)return '';return el.textContent.replace(/^\n/,'').replace(/\s+$/,'').replace(/\t/g,'    ')};
+const codeHTML=(code,lang)=>{const n=code.split('\n').length;return `<div class="gut">${Array.from({length:n},(_,i)=>i+1).join('\n')}</div><pre>${hl(code,lang)}</pre>`};
+
+/* notes */
+const NOTES={};{let cur;document.getElementById('notes').textContent.split('\n').forEach(line=>{line=line.trim();if(!line)return;if(line[0]==='@'){cur=line.slice(1);NOTES[cur]={};return}const i=line.indexOf(':');NOTES[cur][line.slice(0,i)]=line.slice(i+1).trim()})}
+
+/* badge svg */
+const badge=(l,size)=>{const d=L[l];const fs=d.mono.length>2?20:24;return `<svg class="badge" viewBox="0 0 64 64" width="${size||64}" height="${size||64}"><defs><linearGradient id="bg-${l}-${size||64}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${d.color}"/><stop offset="1" stop-color="${d.color}" stop-opacity=".45"/></linearGradient></defs><path d="M32 3 L57 17.5 V46.5 L32 61 L7 46.5 V17.5 Z" fill="url(#bg-${l}-${size||64})"/><path d="M32 3 L57 17.5 V46.5 L32 61 L7 46.5 V17.5 Z" fill="none" stroke="#fff" stroke-opacity=".25"/><text x="32" y="${32+fs/2.8}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="${fs}" fill="#0b0d12">${d.mono}</text></svg>`};
+
+/* ===================== STATE ===================== */
+let lang=store.get('lang','python');if(!L[lang])lang='python';
+let cmpLang=store.get('cmp','');
+let os=store.get('os',null)||(/Mac/.test(navigator.platform||navigator.userAgent)&&!/iPhone|iPad/.test(navigator.userAgent)?'mac':/Linux/.test(navigator.userAgent)&&!/Android/.test(navigator.userAgent)?'linux':'win');
+let done=new Set(store.get('done',[]));
+let miles=store.get('miles',{});
+let quizzes=store.get('quiz',{});
+
+const toast=(t)=>{const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1600)};
+async function copyText(t,btn){let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(e){try{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove()}catch(e2){}}
+ if(btn){btn.textContent=ok?'copied':'select & copy';btn.classList.toggle('ok',ok);setTimeout(()=>{btn.textContent='copy';btn.classList.remove('ok')},1400)}}
+
+/* ===================== BUILD STATIC PARTS ===================== */
+$('#langbar').innerHTML=ORDER.map((l,i)=>`<button class="lchip" data-l="${l}" style="--c:${L[l].color}" title="${L[l].name} (key ${i+1})"><b></b>${L[l].name}</button>`).join('');
+$('#track').innerHTML=ORDER.map(l=>{const d=L[l];return `<article class="lcard" data-l="${l}" style="--c:${d.color}">${badge(l)}<h3>${d.name}</h3><div class="meta">${d.year} · ${d.by}</div><p>${d.tag}</p><div class="tags"><span class="tag">${d.kind}</span><span class="tag">${d.typing}</span>${d.uses.slice(0,2).map(u=>`<span class="tag">${u}</span>`).join('')}</div><button class="btn" data-pick="${l}">Learn this →</button></article>`}).join('');
+$('#cmp').innerHTML=`<div class="cmprow hd"><div></div><div>Ease of start</div><div>Runtime speed</div></div>`+ORDER.map((l,i)=>{const d=L[l];return `<div class="cmprow" style="--c:${d.color}"><div class="nm"><i></i>${d.name}</div><div class="meter"><i style="--w:${d.ease*20}%;--d:${i*.08}s"></i></div><div class="meter"><i style="--w:${d.speed*20}%;--d:${i*.08+.3}s"></i></div></div>`}).join('');
+
+/* paths */
+const PATHS=[['Web frontend','Interactive sites and web apps.','JavaScript → TypeScript','M8 12h48v34H8z M8 20h48 M14 16h2 M20 16h2'],['Backend & APIs','Servers, databases, business logic.','Go · Java · C# · Python · Node','M10 10h44v14H10z M10 30h44v14H10z M18 17h2 M18 37h2'],['Data & AI','Analysis, machine learning, LLM apps.','Python (+ SQL)','M10 50V30 M24 50V18 M38 50V26 M52 50V10'],['Systems & embedded','OSes, firmware, drivers, performance.','C · C++ · Rust','M18 18h28v28H18z M24 10v8 M32 10v8 M40 10v8 M24 46v8 M32 46v8 M40 46v8'],['Mobile','Phone apps.','Kotlin (Java) · Swift · JS (React Native)','M20 6h24v52H20z M29 52h6'],['Games','Engines, gameplay, graphics.','C# (Unity) · C++ (Unreal)','M10 24h44v20H10z M20 30v8 M16 34h8 M40 32h2 M46 36h2']];
+$('#paths').innerHTML=PATHS.map((p,i)=>`<div class="path rv" style="--d:${(i%3)*.1}s"><svg class="ic" viewBox="0 0 64 64" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="${p[3]}"/></svg><h4>${p[0]}</h4><p>${p[1]}</p><span class="tag">${p[2]}</span></div>`).join('');
+
+/* milestones */
+const MILES=[['Model the data','A Task has an id, a title and a done flag. Keep all tasks in a list.','Lessons 2, 7, 8'],['The main loop','Repeatedly print "> ", read a line, and stop on "quit".','Lesson 5 + input'],['Parse commands','Split the line into a command and an argument; branch with if/switch/match.','Lessons 3, 4'],['One function per command','add(title), list(), done(id) — main loop just dispatches.','Lesson 6'],['Never crash','Unknown commands, missing titles, non-numeric or unknown ids → friendly messages.','Lesson 9'],['Persist (stretch goal)','Save tasks to tasks.txt on quit and load them at start. One task per line: id|done|title.','Look up file I/O in your language'],['Ship it (stretch goal)','Put it on GitHub with a README explaining how to build and run it.','Setup section']];
+$('#miles').innerHTML=MILES.map((m,i)=>`<label class="mile rv" style="--d:${i*.06}s"><input type="checkbox" data-m="${i}" ${miles[i]?'checked':''}><div><small>Milestone ${i+1} · ${m[2]}</small><b>${m[0]}</b><span>${m[1]}</span></div></label>`).join('');
+$('#miles').addEventListener('change',e=>{const i=e.target.dataset.m;if(i==null)return;miles[i]=e.target.checked;store.set('miles',miles);if(e.target.checked)toast('Milestone '+(+i+1)+' done 🎉')});
+
+/* lessons */
+$('#lnav').innerHTML=LESSONS.map((x,i)=>`<a href="#l-${x.id}" data-id="${x.id}"><b>${String(i+1).padStart(2,'0')}</b>${x.title.split(' & ')[0].replace('Hello, World','Hello World')}</a>`).join('');
+$('#lessons').innerHTML=LESSONS.map((x,i)=>{const [svgOpen,...rest]=dia(x.diagram);const cap=rest.pop();return `
+<article class="lesson" id="l-${x.id}" data-id="${x.id}">
+ <div class="ln-num rv">${String(i+1).padStart(2,'0')}</div>
+ <div class="sub rv">${x.sub}</div>
+ <h3 class="rv">${x.title}</h3>
+ <p class="intro rv">${x.intro}</p>
+ <div class="keys">${x.keys.map((k,j)=>`<div class="rv" style="--d:${j*.08}s"><b>${k[0]}</b>${k[1]}</div>`).join('')}</div>
+ <figure class="diagram rv">${svgOpen}${rest.join('')}<figcaption>${cap}</figcaption></figure>
+ <div class="codebox rv">
+  <div class="codehead"><span class="fn"><i></i><span class="fname"></span></span><span class="sp"></span>
+   <select class="cmpsel" aria-label="Compare with"><option value="">Compare…</option>${ORDER.map(l=>`<option value="${l}">vs ${L[l].name}</option>`).join('')}</select>
+   <button class="cp" data-copy>copy</button></div>
+  <div class="panes"><div class="pane p1"><div class="plabel"></div><div class="code"></div></div><div class="pane p2" hidden><div class="plabel"></div><div class="code"></div></div></div>
+ </div>
+ <div class="note rv"><span class="nbadge"></span><div><b class="nname"></b> <span class="ntext"></span></div></div>
+ <div class="grid2 qa">
+  <div class="quiz rv l" data-q="${x.id}"><h4><span>CHECK</span>${esc(x.quiz.q)}</h4><div class="opts">${x.quiz.o.map((o,j)=>`<button class="opt" data-j="${j}">${esc(o)}</button>`).join('')}</div><div class="why">${esc(x.quiz.why)}</div></div>
+  <div class="ex rv r"><h4><span>EXERCISE</span>Your turn</h4><p>${esc(x.ex.task)}</p>${x.ex.hints.map((h,j)=>`<details><summary>Hint ${j+1}</summary><p>${esc(h)}</p></details>`).join('')}<details><summary>Expected output</summary><pre>${esc(x.ex.expect)}</pre></details></div>
+ </div>
+ <button class="btn done-btn" data-done="${x.id}">Mark lesson complete</button>
+</article>`}).join('');
+
+/* quiz */
+$$('.quiz').forEach(q=>{const id=q.dataset.q,les=LESSONS.find(l=>l.id===id);const apply=(j)=>{$$('.opt',q).forEach((b,k)=>{b.disabled=true;if(k===les.quiz.a)b.classList.add('right');else if(k===j)b.classList.add('wrong')});$('.why',q).classList.add('show')};
+ if(quizzes[id]!=null)apply(quizzes[id]);
+ q.addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||b.disabled)return;const j=+b.dataset.j;quizzes[id]=j;store.set('quiz',quizzes);apply(j);toast(j===les.quiz.a?'Correct ✓':'Not quite — read why below')})});
+
+/* done buttons */
+function renderDone(){$$('[data-done]').forEach(b=>{const on=done.has(b.dataset.done);b.classList.toggle('isdone',on);b.textContent=on?'✓ Completed':'Mark lesson complete'});$$('.lnav a').forEach(a=>a.classList.toggle('done',done.has(a.dataset.id)));
+ const pct=Math.round(done.size/LESSONS.length*100);$('#ringc').style.strokeDashoffset=94.25*(1-pct/100);$('#ringt').textContent=pct+'%'}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-done]');if(!b)return;const id=b.dataset.done;done.has(id)?done.delete(id):done.add(id);store.set('done',[...done]);renderDone();if(done.has(id))toast(done.size===LESSONS.length?'All lessons done — on to the capstone! 🚀':'Lesson complete ✓')});
+$('#reset').addEventListener('click',()=>{done=new Set();miles={};quizzes={};store.set('done',[]);store.set('miles',{});store.set('quiz',{});location.reload()});
+
+/* ===================== RENDER (language-dependent) ===================== */
+function renderCode(){
+ const d=L[lang];
+ $$('.lesson').forEach(a=>{const id=a.dataset.id;const code=getCode(`code-${id}-${lang}`);
+  $('.fname',a).textContent=d.ext;const p1=$('.p1',a),p2=$('.p2',a),panes=$('.panes',a);
+  $('.code',p1).innerHTML=codeHTML(code,lang);$('.plabel',p1).textContent=cmpLang?d.name:'';
+  const sel=$('.cmpsel',a);sel.value=cmpLang;
+  if(cmpLang&&cmpLang!==lang){p2.hidden=false;panes.classList.add('two');$('.code',p2).innerHTML=codeHTML(getCode(`code-${id}-${cmpLang}`),cmpLang);$('.plabel',p2).textContent=L[cmpLang].name}
+  else{p2.hidden=true;panes.classList.remove('two');$('.plabel',p1).textContent=''}
+  $('.nbadge',a).innerHTML=badge(lang,34);$('.nname',a).textContent='In '+d.name+':';$('.ntext',a).innerHTML=md(NOTES[id][lang]||'');
+ });
+ $('#inputcode').innerHTML=codeHTML(getCode('code-input-'+lang),lang);
+}
+function renderSetup(){
+ const d=L[lang];
+ $('#setupname').textContent=d.name;$('#setuptitle').textContent=d.name+' toolchain';$('#setupbadge').innerHTML=badge(lang,58);
+ $('#setupmeta').textContent=`${d.kind} · ${d.typing} typing · files end in ${d.ext.slice(d.ext.lastIndexOf('.'))}`;
+ $('#setupwhat').innerHTML='<b>What you\'re installing — </b>'+d.what;
+ $$('#ostabs button').forEach(b=>b.classList.toggle('on',b.dataset.os===os));
+ $('#setupsteps').innerHTML=d.steps.map((s,i)=>{const c=s.cmd.all||s.cmd[os];return `<div class="sstep"><div class="n">${i+1}</div><div><h4>${s.t}</h4><p>${s.why}</p><div class="cmd"><span class="ps">${os==='win'&&!s.cmd.all?'PS&gt;':'$'}</span><pre>${esc(c)}</pre><button class="cp">copy</button></div>${s.note?`<p style="font-size:14px">${s.note}</p>`:''}</div></div>`}).join('');
+ $('#setupeditor').innerHTML=d.editor;
+ $('#setuprun').textContent=d.run[os];
+ $('#setuppits').innerHTML=d.pits.map(p=>`<details class="pit"><summary>${esc(p[0])}</summary><div>${p[1]}</div></details>`).join('');
+}
+function setLang(l,quiet){
+ if(!L[l])return;lang=l;store.set('lang',l);const d=L[l];
+ document.documentElement.style.setProperty('--accent',d.color);document.documentElement.style.setProperty('--accent-rgb',d.rgb);
+ $$('.lchip').forEach(c=>c.classList.toggle('on',c.dataset.l===l));
+ const chip=$(`.lchip[data-l="${l}"]`);if(chip&&chip.scrollIntoView&&!quiet){const bar=$('#langbar');bar.scrollTo({left:chip.offsetLeft-bar.clientWidth/2+chip.clientWidth/2,behavior:'smooth'})}
+ $$('.lcard').forEach(c=>c.classList.toggle('sel',c.dataset.l===l));
+ ['#lessonlang','#inlang','#nextlang'].forEach(s=>$(s).textContent=d.name);
+ $('#nextlist').innerHTML=d.next.map(n=>`<li><div><b>${n[0]}</b> — ${n[1]}</div></li>`).join('');
+ $$('#runsvg .lane').forEach(g=>g.classList.toggle('dim',g.dataset.lane!==d.lane));
+ renderCode();renderSetup();updateHow();
+ if(!quiet)toast('Course switched to '+d.name);
+}
+
+/* events */
+$('#langbar').addEventListener('click',e=>{const c=e.target.closest('.lchip');if(c)setLang(c.dataset.l)});
+$('#track').addEventListener('click',e=>{const b=e.target.closest('[data-pick]');if(!b)return;setLang(b.dataset.pick);document.getElementById('setup').scrollIntoView({behavior:'smooth'})});
+$('#ostabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;os=b.dataset.os;store.set('os',os);renderSetup()});
+document.addEventListener('change',e=>{if(e.target.classList.contains('cmpsel')){cmpLang=e.target.value;store.set('cmp',cmpLang);renderCode()}});
+document.addEventListener('click',e=>{const b=e.target.closest('.cp');if(!b)return;let t;
+ if(b.hasAttribute('data-copy')){t=getCode(`code-${b.closest('.lesson').dataset.id}-${lang}`)}else{t=b.parentElement.querySelector('pre').textContent}
+ copyText(t,b)});
+document.addEventListener('keydown',e=>{if(e.target.matches('input,select,textarea')||e.metaKey||e.ctrlKey||e.altKey)return;const n=+e.key;if(n>=1&&n<=8)setLang(ORDER[n-1])});
+
+/* ===================== HERO ===================== */
+$('#herot').innerHTML='Learn to code in <span class="grad">any</span> language.'.split(/(<span[^>]*>.*?<\/span>|\s+)/).filter(s=>s&&!/^\s+$/.test(s)).map((w,i)=>`<span class="w" style="--i:${i}">${w}</span> `).join('');
+(function term(){const out=$('#termout');let li=0;const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ async function cycle(){const l=ORDER[li%ORDER.length];li++;const d=L[l];$('#termtitle').textContent='~/hello-'+l;
+  let html=`<span class="o"># ${d.name} — ${d.kind}</span>\n<span class="p">❯</span> `;const code=d.hello;
+  if(reduce){out.innerHTML=html+esc(code)+`\n<span class="o">Hello, World!</span>`;return}
+  for(let i=0;i<=code.length;i++){out.innerHTML=html+hl(code.slice(0,i),l)+'<span class="cursor"></span>';await new Promise(r=>setTimeout(r,28+Math.random()*40))}
+  await new Promise(r=>setTimeout(r,350));
+  out.innerHTML=html+hl(code,l)+`\n<span class="p">❯</span> <span class="o">${esc(d.run.linux)}</span>\n<span style="color:${d.color}">Hello, World!</span>\n<span class="p">❯</span> <span class="cursor"></span>`;
+  setTimeout(cycle,2200)}
+ cycle()})();
+/* glyph canvas */
+(function(){const cv=$('#glyphs'),cx=cv.getContext('2d');const G='{ } ( ) ; => :: fn def let int if for <> [] && || ++ != == # // return class main print'.split(' ');let W,H,P=[],dpr=Math.min(devicePixelRatio||1,2);
+ function size(){W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0);const n=Math.round(W*H/16000);P=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,z:Math.random()*.9+.1,g:G[Math.random()*G.length|0],s:Math.random()*.25+.05}))}
+ size();addEventListener('resize',size);let sy=0;
+ function f(){cx.clearRect(0,0,W,H);const acc=getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim();
+  for(const p of P){p.y-=p.s*p.z;if(p.y<-20)p.y=H+20;const y=((p.y-sy*p.z*.6)%(H+40)+H+40)%(H+40)-20;cx.font=`${10+p.z*12}px JetBrains Mono, monospace`;cx.fillStyle=`rgba(${acc},${.06+p.z*.22})`;cx.fillText(p.g,p.x,y)}
+  if(!document.hidden&&sy<H*1.2)requestAnimationFrame(f);else setTimeout(()=>requestAnimationFrame(f),300)}
+ addEventListener('scroll',()=>{sy=scrollY},{passive:true});if(!matchMedia('(prefers-reduced-motion: reduce)').matches)f()})();
+
+/* ===================== SCROLL ENGINE ===================== */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);
+ if(e.target.matches('.stats'))countUp()}}),{threshold:.15,rootMargin:'0px 0px -8% 0px'});
+$$('.rv,.diagram,.pipe,.ph,.cmp,.stats').forEach(el=>io.observe(el));
+function countUp(){$$('[data-count]').forEach(el=>{const t=+el.dataset.count;let s=null;const st=(ts)=>{s=s||ts;const p=Math.min((ts-s)/1200,1);el.textContent=Math.round(t*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(st)};requestAnimationFrame(st)})}
+setTimeout(countUp,1300);
+
+const lio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){$$('.lnav a').forEach(a=>a.classList.toggle('on',a.dataset.id===e.target.dataset.id))}}),{rootMargin:'-40% 0px -55% 0px'});
+$$('.lesson').forEach(l=>lio.observe(l));
+
+const how=$('#how'),langs=$('#langs'),track=$('#track'),road=$('#road');let hsDist=0,lastY=0,howStep=-1;
+function sizeHS(){hsDist=Math.max(0,track.scrollWidth-innerWidth+44);langs.style.height=(innerHeight+hsDist)+'px'}
+const lanesX={native:95,vm:270,interp:445};
+function updateHow(){
+ const r=how.getBoundingClientRect();const total=how.offsetHeight-innerHeight;const p=Math.min(1,Math.max(0,-r.top/total));
+ const step=Math.min(3,Math.floor(p*4.0001));
+ if(step!==howStep){howStep=step;$$('#steps .step').forEach((s,i)=>s.classList.toggle('on',i===step));$$('#dots i').forEach((d,i)=>d.classList.toggle('on',i<=step))}
+ $$('#runsvg .box').forEach(b=>{const k=+(b.getAttribute('class').match(/s(\d)/)||[0,9])[1];b.classList.toggle('lit',k<=step&&(b.classList.contains('cpu')?step===3:b.closest('.lane')&&!b.closest('.lane').classList.contains('dim')))});
+ const x=lanesX[L[lang].lane];const y=73+Math.min(p,1)*(460-73);const pk=$('#packet');pk.setAttribute('cx',x);pk.setAttribute('cy',y);
+}
+function onScroll(){
+ const y=scrollY,h=document.documentElement.scrollHeight-innerHeight;$('#bar').style.transform=`scaleX(${h>0?y/h:0})`;
+ $('#nav').classList.toggle('hide',y>lastY&&y>400&&y-lastY>4);if(y<lastY-4||y<400)$('#nav').classList.remove('hide');lastY=y;
+ updateHow();
+ const lr=langs.getBoundingClientRect();const lp=hsDist?Math.min(1,Math.max(0,-lr.top/hsDist)):0;track.style.transform=`translateX(${-lp*hsDist}px)`;
+ const rr=road.getBoundingClientRect();const rp=Math.min(1,Math.max(0,(innerHeight*.6-rr.top)/rr.height));$('#spine').style.transform=`scaleY(${rp})`;
+}
+let tick=false;addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(()=>{onScroll();tick=false})}},{passive:true});
+addEventListener('resize',()=>{sizeHS();onScroll()});
+
+/* init */
+renderDone();setLang(lang,true);sizeHS();onScroll();
+document.fonts&&document.fonts.ready.then(()=>{sizeHS();onScroll()});
+})();
+</script>
+</body>
+</html>
